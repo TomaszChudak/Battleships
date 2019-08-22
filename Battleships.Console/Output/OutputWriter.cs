@@ -2,7 +2,6 @@
 {
     internal interface IOutputWriter
     {
-        //int CursorTop { get; }
         void Write(string value);
         void WriteNewLine();
         void SetCursorPosition(int left, int top);
@@ -24,7 +23,5 @@
         {
             System.Console.SetCursorPosition(left, top);
         }
-
-        //public int CursorTop => System.Console.CursorTop;
     }
 }
