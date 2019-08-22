@@ -22,7 +22,7 @@ namespace Battleships.Console.Output
 
         public void PaintResult(ShotResult result)
         {
-            if (result.Kind == ShotResult.Kinds.Sink)
+            if (result.Kind == ShotResult.Kinds.Sink || result.Kind == ShotResult.Kinds.GameEnd)
                 PaintShipSink(result);
             else if (result.Kind == ShotResult.Kinds.Hit)
                 PaintShipHit(result.Coordinate, 'X');
