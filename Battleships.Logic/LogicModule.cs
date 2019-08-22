@@ -1,11 +1,11 @@
-﻿using System.IO;
-using System.Runtime.CompilerServices;
-using Battleships.Logic.Grid;
+﻿using Battleships.Logic.Grid;
 using Battleships.Logic.Helpers;
 using Battleships.Logic.Settings;
 using Battleships.Logic.Ships;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: InternalsVisibleTo("Battleships.Logic.Tests")]
