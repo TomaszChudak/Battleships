@@ -23,7 +23,7 @@ namespace Battleships.Logic.Tests.Coordinates
         [InlineData("K8", 'K', "8")]
         [InlineData("H99", 'H', "99")]
         [InlineData("Z100", 'Z', "100")]
-        public void Parse_SensibleCoordinate_ReturnRightResult(string coordinatesFromClient, char expectedColumn, string expectedRow)
+        public void Parse_SensibleCoordinate_ValidationResultWithSuccess(string coordinatesFromClient, char expectedColumn, string expectedRow)
         {
             var result = _sut.Validate(coordinatesFromClient);
 
@@ -41,7 +41,7 @@ namespace Battleships.Logic.Tests.Coordinates
         [InlineData("battleship")]
         [InlineData("@3")]
         [InlineData("&8")]
-        public void Parse_WrongCoordinate_ThrowException(string coordinatesFromClient)
+        public void Parse_WrongCoordinate_ValidationResultWithError(string coordinatesFromClient)
         {
             var result = _sut.Validate(coordinatesFromClient);
 
@@ -50,7 +50,7 @@ namespace Battleships.Logic.Tests.Coordinates
         }
 
         [Fact]
-        public void Parse_NullCoordinate_ThrowException()
+        public void Parse_NullCoordinate_ValidationResultWithError()
         {
             var result = _sut.Validate(null);
 

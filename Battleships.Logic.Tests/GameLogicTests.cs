@@ -54,7 +54,7 @@ namespace Battleships.Logic.Tests
         }
 
         [Fact]
-        public void MakeNewMove_WrongCoordinates_ExceptionIsThrown()
+        public void MakeNewMove_WrongCoordinates_ResultWithWrongCoordinatesDesc()
         {
             var coordinate = (Coordinate) null;
             _coordinateParserMock.Setup(x => x.TryParse("AA", out coordinate))
@@ -62,7 +62,7 @@ namespace Battleships.Logic.Tests
 
             var result = _sut.MakeNewMove("AA");
 
-            result.Kind.Should().Be(ShotResult.Kinds.Exception);
+            result.Kind.Should().Be(ShotResult.Kinds.WrongCoordinates);
             result.Description.Should().Be("Expected coordinate are one letter and number (from 1 to 999).");
 
             _settingsCheckerMock.Verify(x => x.Check(), Times.Never);

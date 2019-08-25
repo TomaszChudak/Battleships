@@ -38,7 +38,7 @@ namespace Battleships.Logic
         {
             var validationResult = _coordinateParser.TryParse(shotCoordinate, out var coordinate);
             if (validationResult?.ErrorMessage != null)
-                return new ShotResult {Kind = ShotResult.Kinds.Exception, Description = validationResult.ErrorMessage};
+                return new ShotResult {Kind = ShotResult.Kinds.WrongCoordinates, Description = validationResult.ErrorMessage};
 
             return _grid.Shot(coordinate);
         }

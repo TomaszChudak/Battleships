@@ -49,8 +49,8 @@ namespace Battleships.Logic.Grid
             if (shot == null)
                 return new ShotResult {Coordinate = coordinate, Description = "Water", Kind = ShotResult.Kinds.Water};
 
-            if(shot is bool)
-                return new ShotResult {Coordinate = coordinate, Description = "You have entered the same coordinates again", Kind = ShotResult.Kinds.TheSameCoordinatesAgain};
+            if (shot is bool)
+                return new ShotResult { Coordinate = coordinate, Description = "You have entered the same coordinates again", Kind = ShotResult.Kinds.TheSameCoordinatesAgain };
 
             var hit = ((Ship) shot).Shot(coordinate);
 

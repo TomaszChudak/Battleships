@@ -39,7 +39,8 @@ namespace Battleships.Console.Output
 
         public void MarkAndDisplayResult(ShotResult result)
         {
-            if (result.Kind != ShotResult.Kinds.TheSameCoordinatesAgain
+            if (result.Kind != ShotResult.Kinds.WrongCoordinates
+                && result.Kind != ShotResult.Kinds.TheSameCoordinatesAgain
                 && result.Kind != ShotResult.Kinds.Exception)
             {
                 _soundPlayer.PlayResult(result);
