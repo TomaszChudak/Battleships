@@ -11,6 +11,5 @@ To run - run Battleships.Console project
 Cofiguration:
 To change some features of the game you can edit appsettings.json
 'Grid' section - number of columns and rows of grid (possible values between 10 and 20)
-'ShipTypes' section - you can add other types of ships (possible Size values between 1 and 6)
-'ShipCount' section - how many ships of any type will be placed on the grid (possible Count values between 0 and 10)
+'ShipTypes' section - you can add other types of ships (possible Size values between 1 and 6, possible Count values between 0 and 10)
 All possible values are set in SettingRules class

@@ -6,6 +6,5 @@ namespace Battleships.Logic.Settings
     {
         public GridSettings Grid { get; set; }
         public IEnumerable<ShipTypeSettings> ShipTypes { get; set; }
-        public IEnumerable<ShipCountSettings> ShipCount { get; set; }
     }
 }

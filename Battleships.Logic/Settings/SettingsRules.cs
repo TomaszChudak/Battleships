@@ -10,11 +10,11 @@
         internal const int MinimalGridColumnCount = 10;
         internal const int MaximalGridColumnCount = 20;
 
-        // ShipTypes section
+        // ShipTypes / Size section 
         internal const int MinimalShipTypeSize = 1;
         internal const int MaximalShipTypeSize = 6;
 
-        // ShipCount section
+        // ShipTypes / Count section
         internal const int MinimalShipCount = 0;
         internal const int MaximalShipCount = 10;
     }

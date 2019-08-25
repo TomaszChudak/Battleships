@@ -29,7 +29,6 @@ namespace Battleships.Logic.Settings
                 CheckAutoParsing();
                 CheckGridSettings();
                 CheckShipTypes();
-                CheckShipCount();
             }
             catch (Exception e)
             {
@@ -78,33 +77,19 @@ namespace Battleships.Logic.Settings
 
             foreach (var shipType in _config.Value.ShipTypes)
             {
+                if (shipType.Size == null)
+                    throw new ApplicationException($"Lack of ShipTypes -> Size of '{shipType.Name}' setting.");
+
                 if(shipType.Size < SettingsRules.MinimalShipTypeSize
                    || shipType.Size > SettingsRules.MaximalShipTypeSize)
-                    throw new ApplicationException($"ShipType -> Size of '{shipType.Name}' should be between {SettingsRules.MinimalShipTypeSize} and {SettingsRules.MaximalShipTypeSize}.");
-            }
-        }
+                    throw new ApplicationException($"ShipTypes -> Size of '{shipType.Name}' should be between {SettingsRules.MinimalShipTypeSize} and {SettingsRules.MaximalShipTypeSize}.");
 
-        private void CheckShipCount()
-        {
-            if (_config.Value.ShipCount == null)
-                throw new ApplicationException("Lack of ShipCount setting.");
+                if (shipType.Count == null)
+                    throw new ApplicationException($"Lack of ShipTypes -> Count of '{shipType.Name}' setting.");
 
-            if (!_config.Value.ShipCount.Any())
-                throw new ApplicationException("Lack of any ship type in ShipCount setting.");
-
-            foreach (var shipCount in _config.Value.ShipCount)
-            {
-                if(shipCount.Count < SettingsRules.MinimalShipCount
-                   || shipCount.Count > SettingsRules.MaximalShipCount)
-                    throw new ApplicationException($"ShipCount -> Count of '{shipCount.Name}' should be between {SettingsRules.MinimalShipCount} and {SettingsRules.MaximalShipCount}.");
-            }
-
-            var shipTypeNames = _config.Value.ShipTypes.Select(x => x.Name).ToList();
-
-            foreach (var shipCount in _config.Value.ShipCount)
-            {
-                if(!shipTypeNames.Contains(shipCount.Name))
-                    throw new ApplicationException($"ShipCount setting contains unknown ship name {shipCount.Name}. It should contains only these ships which are defined in ShipTypes setting.");
+                if (shipType.Count < SettingsRules.MinimalShipCount
+                   || shipType.Count > SettingsRules.MaximalShipCount)
+                    throw new ApplicationException($"ShipTypes -> Count of '{shipType.Name}' should be between {SettingsRules.MinimalShipCount} and {SettingsRules.MaximalShipCount}.");
             }
         }
     }

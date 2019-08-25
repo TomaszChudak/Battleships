@@ -34,8 +34,7 @@ namespace Battleships.Logic.Tests.Grid
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 5},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 5}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 5}},
                 });
             _gridMock.Setup(x => x.Build(10, 5));
             var ship = new Ship("Battleship", new Coordinate(0, 0), true, 5);
@@ -48,7 +47,7 @@ namespace Battleships.Logic.Tests.Grid
 
             act.Should().Throw<ApplicationException>().WithMessage("Can't find any place for new ship.");
 
-            _configMock.Verify(x => x.Value, Times.Exactly(4));
+            _configMock.Verify(x => x.Value, Times.Exactly(3));
             _gridMock.Verify(x => x.Build(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
             _gridMock.Verify(x => x.Build(10, 5), Times.Once);
             _shipFactoryMock.Verify(x => x.BuildShip(It.IsAny<string>()), Times.Exactly(100));
@@ -63,8 +62,7 @@ namespace Battleships.Logic.Tests.Grid
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 5},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 5}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 5}},
                 });
             _gridMock.Setup(x => x.Build(10, 5));
             var ship = new Ship("Battleship", new Coordinate(0, 0), true, 5);
@@ -84,7 +82,7 @@ namespace Battleships.Logic.Tests.Grid
             result.Ships.Should().HaveCount(1);
             result.Ships.Should().Contain(x => x.Size == 5 && x.Name == "Battleship");
 
-            _configMock.Verify(x => x.Value, Times.Exactly(4));
+            _configMock.Verify(x => x.Value, Times.Exactly(3));
             _gridMock.Verify(x => x.Build(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
             _gridMock.Verify(x => x.Build(10, 5), Times.Once);
             _shipFactoryMock.Verify(x => x.BuildShip(It.IsAny<string>()), Times.Exactly(5));
@@ -99,8 +97,7 @@ namespace Battleships.Logic.Tests.Grid
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 5},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings>()
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}}
                 });
             _gridMock.Setup(x => x.Build(10, 5));
             _gridMock.Setup(x => x.Size)
@@ -114,7 +111,7 @@ namespace Battleships.Logic.Tests.Grid
             result.Size.RowCount.Should().Be(5);
             result.Ships.Should().BeEmpty();
 
-            _configMock.Verify(x => x.Value, Times.Exactly(4));
+            _configMock.Verify(x => x.Value, Times.Exactly(3));
             _gridMock.Verify(x => x.Build(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
             _gridMock.Verify(x => x.Build(10, 5), Times.Once);
             _shipFactoryMock.Verify(x => x.BuildShip(It.IsAny<string>()), Times.Never);
@@ -128,8 +125,7 @@ namespace Battleships.Logic.Tests.Grid
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 5},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}},
                 });
             _gridMock.Setup(x => x.Build(10, 5));
             var ship = new Ship("Battleship", new Coordinate(0, 0), true, 5);
@@ -149,7 +145,7 @@ namespace Battleships.Logic.Tests.Grid
             result.Ships.Should().HaveCount(1);
             result.Ships.Should().Contain(x => x.Size == 5 && x.Name == "Battleship");
 
-            _configMock.Verify(x => x.Value, Times.Exactly(4));
+            _configMock.Verify(x => x.Value, Times.Exactly(3));
             _gridMock.Verify(x => x.Build(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
             _gridMock.Verify(x => x.Build(10, 5), Times.Once);
             _shipFactoryMock.Verify(x => x.BuildShip(It.IsAny<string>()), Times.Once);

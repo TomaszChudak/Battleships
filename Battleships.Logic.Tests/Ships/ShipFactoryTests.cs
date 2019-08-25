@@ -30,8 +30,7 @@ namespace Battleships.Logic.Tests.Ships
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}},
                 });
             Action act = () => _sut.BuildShip("Boat");
 
@@ -51,8 +50,7 @@ namespace Battleships.Logic.Tests.Ships
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = size}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = size, Count = 1}},
                 });
             _randomWrapperMock.Setup(x => x.Next(2))
                 .Returns(1);

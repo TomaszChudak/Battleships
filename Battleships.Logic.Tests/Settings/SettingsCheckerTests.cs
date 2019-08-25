@@ -38,8 +38,7 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = size}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = size, Count = 1}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
@@ -62,14 +61,13 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = size}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = size, Count = 1}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
             Action act = () => _sut.Check();
 
-            act.Should().Throw<ApplicationException>().WithMessage($"An issue with settings in appsettings.json file has been found. ShipType -> Size of 'Battleship' should be between {SettingsRules.MinimalShipTypeSize} and {SettingsRules.MaximalShipTypeSize}.");
+            act.Should().Throw<ApplicationException>().WithMessage($"An issue with settings in appsettings.json file has been found. ShipTypes -> Size of 'Battleship' should be between {SettingsRules.MinimalShipTypeSize} and {SettingsRules.MaximalShipTypeSize}.");
 
             _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
             _fileWrapperMock.Verify(x => x.Exists(AppSettingsFileName), Times.Once);
@@ -91,8 +89,7 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = count}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = count}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
@@ -115,14 +112,13 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 4}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = count}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 4, Count = count}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
             Action act = () => _sut.Check();
 
-            act.Should().Throw<ApplicationException>().WithMessage($"An issue with settings in appsettings.json file has been found. ShipCount -> Count of 'Battleship' should be between {SettingsRules.MinimalShipCount} and {SettingsRules.MaximalShipCount}.");
+            act.Should().Throw<ApplicationException>().WithMessage($"An issue with settings in appsettings.json file has been found. ShipTypes -> Count of 'Battleship' should be between {SettingsRules.MinimalShipCount} and {SettingsRules.MaximalShipCount}.");
 
             _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
             _fileWrapperMock.Verify(x => x.Exists(AppSettingsFileName), Times.Once);
@@ -139,8 +135,7 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
@@ -161,8 +156,7 @@ namespace Battleships.Logic.Tests.Settings
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
@@ -184,8 +178,7 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
@@ -213,30 +206,7 @@ namespace Battleships.Logic.Tests.Settings
 
             Action act = () => _sut.Check();
 
-            act.Should().Throw<ApplicationException>().WithMessage("An issue with settings in appsettings.json file has been found. Lack of ShipCount setting.");
-
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(AppSettingsFileName), Times.Once);
-            _configMock.Verify(x => x.Value, Times.AtLeast(1));
-        }
-
-        [Fact]
-        public void Check_IssueWithShipCountCount_ExceptionIsThrown()
-        {
-            _fileWrapperMock.Setup(x => x.Exists(AppSettingsFileName))
-                .Returns(true);
-            _configMock.Setup(x => x.Value)
-                .Returns(new AppSettings
-                {
-                    Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings>()
-                });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
-
-            Action act = () => _sut.Check();
-
-            act.Should().Throw<ApplicationException>().WithMessage("An issue with settings in appsettings.json file has been found. Lack of any ship type in ShipCount setting.");
+            act.Should().Throw<ApplicationException>().WithMessage("An issue with settings in appsettings.json file has been found. Lack of ShipTypes -> Count of 'Battleship' setting.");
 
             _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
             _fileWrapperMock.Verify(x => x.Exists(AppSettingsFileName), Times.Once);
@@ -252,13 +222,13 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Count = 1}}
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
             Action act = () => _sut.Check();
 
-            act.Should().Throw<ApplicationException>().WithMessage("An issue with settings in appsettings.json file has been found. Lack of ShipTypes setting.");
+            act.Should().Throw<ApplicationException>().WithMessage("An issue with settings in appsettings.json file has been found. Lack of ShipTypes -> Size of 'Battleship' setting.");
 
             _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
             _fileWrapperMock.Verify(x => x.Exists(AppSettingsFileName), Times.Once);
@@ -274,14 +244,13 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings>(),
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Count = 1}}
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
             Action act = () => _sut.Check();
 
-            act.Should().Throw<ApplicationException>().WithMessage("An issue with settings in appsettings.json file has been found. Lack of any ship type in ShipTypes setting.");
+            act.Should().Throw<ApplicationException>().WithMessage("An issue with settings in appsettings.json file has been found. Lack of ShipTypes -> Size of 'Battleship' setting.");
 
             _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
             _fileWrapperMock.Verify(x => x.Exists(AppSettingsFileName), Times.Once);
@@ -319,8 +288,7 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = columnCount, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 5}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 5}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
@@ -344,8 +312,7 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = columnCount, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 4}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 5}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 4, Count = 5}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
@@ -373,8 +340,7 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = rowCount},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 5}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 5}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
@@ -398,8 +364,7 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = rowCount},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 4}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Battleship", Count = 5}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 4, Count = 5}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
@@ -421,35 +386,11 @@ namespace Battleships.Logic.Tests.Settings
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Destroyer", Size = 4}, new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Destroyer", Count = 2}, new ShipCountSettings {Name = "Battleship", Count = 1}}
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Destroyer", Size = 4, Count = 2}, new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}},
                 });
             _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
 
             _sut.Check();
-
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(AppSettingsFileName), Times.Once);
-            _configMock.Verify(x => x.Value, Times.AtLeast(1));
-        }
-
-        [Fact]
-        public void Check_ShipTypeNameAndShipCountNameAreDifferent_ExceptionIsThrown()
-        {
-            _fileWrapperMock.Setup(x => x.Exists(AppSettingsFileName))
-                .Returns(true);
-            _configMock.Setup(x => x.Value)
-                .Returns(new AppSettings
-                {
-                    Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Destroyer", Size = 4}, new ShipTypeSettings {Name = "Battleship", Size = 5}},
-                    ShipCount = new List<ShipCountSettings> {new ShipCountSettings {Name = "Submarine", Count = 2}, new ShipCountSettings {Name = "Battleship", Count = 1}}
-                });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
-
-            Action act = () => _sut.Check();
-
-            act.Should().Throw<ApplicationException>().WithMessage($"An issue with settings in appsettings.json file has been found. ShipCount setting contains unknown ship name Submarine. It should contains only these ships which are defined in ShipTypes setting.");
 
             _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
             _fileWrapperMock.Verify(x => x.Exists(AppSettingsFileName), Times.Once);

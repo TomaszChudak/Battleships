@@ -29,10 +29,9 @@ namespace Battleships.Logic.Grid
         {
             _grid.Build(_config.Value.Grid.ColumnCount.Value, _config.Value.Grid.RowCount.Value);
 
-            foreach (var shipType in GetShipCountSettingsesOrderedBySize())
-                if (shipType != null)
-                    for (var i = 0; i < shipType.Count; i++)
-                    for (var x = 0; x < 100; x++)
+            foreach (var shipType in _config.Value.ShipTypes.OrderByDescending(x => x.Size))
+                for (var i = 0; i < shipType.Count; i++)
+                    for (var x = 0; x < 1000; x++)
                     {
                         var ship = _shipFactory.BuildShip(shipType.Name);
                         if (_grid.TryPlaceShip(ship))
@@ -42,11 +41,6 @@ namespace Battleships.Logic.Grid
                     }
 
             return _grid;
-        }
-
-        private IList<ShipCountSettings> GetShipCountSettingsesOrderedBySize()
-        {
-            return _config.Value.ShipTypes.OrderByDescending(x => x.Size).Select(x => _config.Value.ShipCount.SingleOrDefault(y => y.Name == x.Name)).ToList();
         }
     }
 }
