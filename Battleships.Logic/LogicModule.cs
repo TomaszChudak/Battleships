@@ -18,7 +18,6 @@ namespace Battleships.Logic
         public static IServiceCollection AddLogicModule(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<ISettingsChecker, SettingsChecker>();
-            serviceCollection.AddSingleton<IFileWrapper, FileWrapper>();
             serviceCollection.AddSingleton<IRandomWrapper, RandomWrapper>();
             serviceCollection.AddSingleton<IGameLogic, GameLogic>();
             serviceCollection.AddSingleton<IGrid, Grid.Grid>();

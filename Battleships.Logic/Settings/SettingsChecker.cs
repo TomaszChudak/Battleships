@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Battleships.Logic.Helpers;
@@ -15,20 +14,17 @@ namespace Battleships.Logic.Settings
     internal class SettingsChecker : ISettingsChecker
     {
         private readonly IOptions<AppSettings> _config;
-        private readonly IFileWrapper _fileWrapper;
 
-        public SettingsChecker(IOptions<AppSettings> config, IFileWrapper fileWrapper)
+        public SettingsChecker(IOptions<AppSettings> config)
         {
             _config = config;
-            _fileWrapper = fileWrapper;
         }
 
         public ValidationResult Check()
         {
             var listCheckSettingRules = new List<CheckSettingRule>
             {
-                CheckIsFileExists,
-                CheckAutoParsing,
+                CheckIfAllSettingsAreEmpty,
                 CheckGridSettings,
                 CheckShipTypes
             };
@@ -43,23 +39,11 @@ namespace Battleships.Logic.Settings
             return ValidationResult.Success;
         }
 
-        private ValidationResult CheckIsFileExists()
+        private ValidationResult CheckIfAllSettingsAreEmpty()
         {
-            return _fileWrapper.Exists(SettingsRules.SettingFileName)
-                ? ValidationResult.Success
-                : new ValidationResult($"No {SettingsRules.SettingFileName} file was found.");
-        }
-
-        private ValidationResult CheckAutoParsing()
-        {
-            try
-            {
-                var value = _config.Value;
-            }
-            catch (Exception ex)
-            {
-                return new ValidationResult(ex.Message);
-            }
+            if (_config.Value.Grid == null
+                && _config.Value.ShipTypes == null)
+                return new ValidationResult($"All elements of setting file are missing or no {SettingsRules.SettingFileName} file has been found.");
 
             return ValidationResult.Success;
         }

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Battleships.Logic.Helpers;
 using Battleships.Logic.Settings;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
@@ -15,11 +14,9 @@ namespace Battleships.Logic.Tests.Settings
         public SettingsCheckerTests()
         {
             _configMock = new Mock<IOptions<AppSettings>>(MockBehavior.Strict);
-            _fileWrapperMock = new Mock<IFileWrapper>(MockBehavior.Strict);
         }
 
         private readonly Mock<IOptions<AppSettings>> _configMock;
-        private readonly Mock<IFileWrapper> _fileWrapperMock;
         private ISettingsChecker _sut;
 
         public static IEnumerable<object[]> GetAllShipTypeSizes =>
@@ -31,20 +28,18 @@ namespace Battleships.Logic.Tests.Settings
         [MemberData(nameof(GetAllShipTypeSizes))]
         public void Check_ShipTypeSizeOk_NoExceptionIsThrown(int size)
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = size, Count = 1}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
-            _sut.Check();
+            var result = _sut.Check();
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
+            result.Should().Be(ValidationResult.Success);
+
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
@@ -54,15 +49,13 @@ namespace Battleships.Logic.Tests.Settings
         [InlineData(7)]
         public void Check_ShipTypeSizeWrong_ValidataionResultWithError(int size)
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = size, Count = 1}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
@@ -71,8 +64,6 @@ namespace Battleships.Logic.Tests.Settings
                 .Be(
                     $"An issue with settings in {SettingsRules.SettingFileName} file has been found. ShipTypes -> Size of 'Battleship' should be between {SettingsRules.MinimalShipTypeSize} and {SettingsRules.MaximalShipTypeSize}.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
@@ -85,20 +76,16 @@ namespace Battleships.Logic.Tests.Settings
         [MemberData(nameof(GetAllShipCounts))]
         public void Check_ShipCountOk_NoExceptionIsThrown(int count)
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = count}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             _sut.Check();
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
@@ -108,15 +95,13 @@ namespace Battleships.Logic.Tests.Settings
         [InlineData(11)]
         public void Check_ShipCountWrong_ValidataionResultWithError(int count)
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 4, Count = count}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
@@ -125,8 +110,6 @@ namespace Battleships.Logic.Tests.Settings
                 .Be(
                     $"An issue with settings in {SettingsRules.SettingFileName} file has been found. ShipTypes -> Count of 'Battleship' should be between {SettingsRules.MinimalShipCount} and {SettingsRules.MaximalShipCount}.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
@@ -139,20 +122,16 @@ namespace Battleships.Logic.Tests.Settings
         [MemberData(nameof(GetAllGridColumnCounts))]
         public void Check_GridColumnCountOk_NoExceptionIsThrown(int columnCount)
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = columnCount, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 5}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             _sut.Check();
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
@@ -163,15 +142,13 @@ namespace Battleships.Logic.Tests.Settings
         [InlineData(121)]
         public void Check_GridColumnCountWrong_ValidataionResultWithError(int columnCount)
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = columnCount, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 4, Count = 5}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
@@ -180,8 +157,6 @@ namespace Battleships.Logic.Tests.Settings
                 .Be(
                     $"An issue with settings in {SettingsRules.SettingFileName} file has been found. Grid -> ColumnCount should be between {SettingsRules.MinimalGridColumnCount} and {SettingsRules.MaximalGridColumnCount}.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
@@ -194,20 +169,16 @@ namespace Battleships.Logic.Tests.Settings
         [MemberData(nameof(GetAllGridRowCounts))]
         public void Check_GridRowCountOk_NoExceptionIsThrown(int rowCount)
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = rowCount},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 5}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             _sut.Check();
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
@@ -218,23 +189,19 @@ namespace Battleships.Logic.Tests.Settings
         [InlineData(111)]
         public void Check_GridRowCountWrong_ValidataionResultWithError(int rowCount)
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = rowCount},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 4, Count = 5}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Grid -> RowCount should be between {SettingsRules.MinimalGridRowCount} and {SettingsRules.MaximalGridRowCount}.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
@@ -242,162 +209,138 @@ namespace Battleships.Logic.Tests.Settings
         [Fact]
         public void Check_IssueWithColumnCount_ValidataionResultWithError()
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of Grid -> ColumnCount setting.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
         public void Check_IssueWithGrid_ValidataionResultWithError()
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of Grid setting.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
         public void Check_IssueWithRowCount_ExceptionIsThrown()
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of Grid -> RowCount setting.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
         public void Check_IssueWithShipCount_ValidataionResultWithError()
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of ShipTypes -> Count of 'Battleship' setting.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
         public void Check_IssueWithShipTypes_ValidataionResultWithError()
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Count = 1}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of ShipTypes -> Size of 'Battleship' setting.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
         public void Check_IssueWithShipTypesCount_ValidataionResultWithError()
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Count = 1}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of ShipTypes -> Size of 'Battleship' setting.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
         public void Check_NoAppSettingFile_ValidataionResultWithError()
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(false);
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _configMock.Setup(x => x.Value)
+                .Returns(new AppSettings
+                {
+                    Grid = null,
+                    ShipTypes = null
+                });
+            _sut = new SettingsChecker(_configMock.Object);
 
             var result = _sut.Check();
 
             result.Should().NotBe(ValidationResult.Success);
-            result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. No {SettingsRules.SettingFileName} file was found.");
+            result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. All elements of setting file are missing or no {SettingsRules.SettingFileName} file has been found.");
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
-            _configMock.Verify(x => x.Value, Times.Never);
+            _configMock.Verify(x => x.Value, Times.Exactly(2));
         }
 
         [Fact]
         public void Check_ShipTypeNameAndShipCountNameAreTheSame_NoExceptionIsThrown()
         {
-            _fileWrapperMock.Setup(x => x.Exists(SettingsRules.SettingFileName))
-                .Returns(true);
             _configMock.Setup(x => x.Value)
                 .Returns(new AppSettings
                 {
@@ -405,12 +348,10 @@ namespace Battleships.Logic.Tests.Settings
                     ShipTypes = new List<ShipTypeSettings>
                         {new ShipTypeSettings {Name = "Destroyer", Size = 4, Count = 2}, new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}}
                 });
-            _sut = new SettingsChecker(_configMock.Object, _fileWrapperMock.Object);
+            _sut = new SettingsChecker(_configMock.Object);
 
             _sut.Check();
 
-            _fileWrapperMock.Verify(x => x.Exists(It.IsAny<string>()), Times.Once);
-            _fileWrapperMock.Verify(x => x.Exists(SettingsRules.SettingFileName), Times.Once);
             _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
     }
