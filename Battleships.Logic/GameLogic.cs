@@ -8,8 +8,8 @@ namespace Battleships.Logic
 {
     public interface IGameLogic
     {
-        GridSize StartNewGame();
-        ShotResult MakeNewMove(string shotCoordinate);
+        ResponseEnvelope<GridSize> StartNewGame();
+        ResponseEnvelope<ShotResult> MakeNewMove(string shotCoordinate);
     }
 
     internal class GameLogic : IGameLogic
@@ -26,24 +26,38 @@ namespace Battleships.Logic
             _coordinateParser = coordinateParser;
         }
 
-        public GridSize StartNewGame()
+        public ResponseEnvelope<GridSize> StartNewGame()
         {
-            var validationResult = _settingsChecker.Check();
-            if (validationResult?.ErrorMessage != null)
-                throw new ApplicationException(validationResult.ErrorMessage);
+            try
+            {
+                var validationResult = _settingsChecker.Check();
+                if (validationResult?.ErrorMessage != null)
+                    return new ResponseEnvelope<GridSize> {Success = false, ErrorDescription = validationResult.ErrorMessage};
 
-            _grid = _gridBuilder.Build();
+                _grid = _gridBuilder.Build();
 
-            return _grid.Size;
+                return new ResponseEnvelope<GridSize> {Success = true, Content = _grid.Size};
+            }
+            catch (Exception e)
+            {
+                return new ResponseEnvelope<GridSize> {Success = false, ErrorDescription = e.Message};
+            }
         }
 
-        public ShotResult MakeNewMove(string shotCoordinate)
+        public ResponseEnvelope<ShotResult> MakeNewMove(string shotCoordinate)
         {
-            var validationResult = _coordinateParser.TryParse(shotCoordinate, out var coordinate);
-            if (validationResult?.ErrorMessage != null)
-                return new ShotResult {Kind = ShotResult.Kinds.WrongCoordinates, Description = validationResult.ErrorMessage};
+            try
+            {
+                var validationResult = _coordinateParser.TryParse(shotCoordinate, out var coordinate);
+                if (validationResult?.ErrorMessage != null)
+                    return new ResponseEnvelope<ShotResult> {Success = true, Content = new ShotResult {Kind = ShotResult.Kinds.WrongCoordinates, Description = validationResult.ErrorMessage}};
 
-            return _grid.Shot(coordinate);
+                return new ResponseEnvelope<ShotResult> {Success = true, Content = _grid.Shot(coordinate)};
+            }
+            catch (Exception e)
+            {
+                return new ResponseEnvelope<ShotResult> {Success = false, ErrorDescription = e.Message};
+            }
         }
     }
 }

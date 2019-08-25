@@ -30,9 +30,9 @@ namespace Battleships.Console
             {
                 StartAndPlayGame();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                _outputFacade.DisplayException(e);
+                _outputFacade.DisplayException(e.Message);
             }
 
             _inputReader.ReadUserKey();
@@ -40,9 +40,15 @@ namespace Battleships.Console
 
         private void StartAndPlayGame()
         {
-            var gridSize = _gameLogic.StartNewGame();
+            var gridSizeEnvelope = _gameLogic.StartNewGame();
 
-            _outputFacade.PaintNewGrid(gridSize);
+            if (!gridSizeEnvelope.Success)
+            {
+                _outputFacade.DisplayException(gridSizeEnvelope.ErrorDescription);
+                return;
+            }
+
+            _outputFacade.PaintNewGrid(gridSizeEnvelope.Content);
 
             var result = new ShotResult();
 
@@ -53,19 +59,17 @@ namespace Battleships.Console
                 result = GetNextMoveResult(userCommand);
 
                 _outputFacade.MarkAndDisplayResult(result);
-            }            
+            }
         }
 
         private ShotResult GetNextMoveResult(string userCommand)
         {
-            try
-            {
-                return _gameLogic.MakeNewMove(userCommand);
-            }
-            catch (Exception e)
-            {
-                return new ShotResult {Description = e.Message, Kind = ShotResult.Kinds.Exception};
-            }
+            var shotResultEnvelope = _gameLogic.MakeNewMove(userCommand);
+
+            if (!shotResultEnvelope.Success)
+                return new ShotResult {Description = shotResultEnvelope.ErrorDescription, Kind = ShotResult.Kinds.Exception};
+
+            return shotResultEnvelope.Content;
         }
     }
 }

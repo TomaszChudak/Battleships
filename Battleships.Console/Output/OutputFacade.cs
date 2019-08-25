@@ -1,5 +1,4 @@
 ﻿using Battleships.Logic.Public;
-using System;
 
 namespace Battleships.Console.Output
 {
@@ -7,7 +6,7 @@ namespace Battleships.Console.Output
     {
         void PaintNewGrid(GridSize gridSize);
         void MarkAndDisplayResult(ShotResult result);
-        void DisplayException(Exception e);
+        void DisplayException(string message);
     }
 
     internal class OutputFacade : IOutputFacade
@@ -15,9 +14,9 @@ namespace Battleships.Console.Output
         private readonly ICursorHelper _cursorHelper;
         private readonly IGridPainter _gridPainter;
         private readonly IGridResultPainter _gridResultPainter;
+        private readonly IOutputWriter _outputWriter;
         private readonly ISoundPlayer _soundPlayer;
         private readonly ITextResultDisplayer _textResultDisplayer;
-        private readonly IOutputWriter _outputWriter;
 
         public OutputFacade(ICursorHelper cursorHelper, IGridPainter gridPainter, IGridResultPainter gridResultPainter, ITextResultDisplayer textResultDisplayer,
             ISoundPlayer soundPlayer, IOutputWriter outputWriter)
@@ -50,10 +49,10 @@ namespace Battleships.Console.Output
             _textResultDisplayer.DisplayResult(result);
         }
 
-        public void DisplayException(Exception e)
+        public void DisplayException(string message)
         {
             _outputWriter.SetCursorPosition(0, 0);
-            _outputWriter.Write(e.Message);
+            _outputWriter.Write(message);
         }
     }
 }

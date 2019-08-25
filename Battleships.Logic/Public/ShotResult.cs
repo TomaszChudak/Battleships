@@ -13,7 +13,7 @@ namespace Battleships.Logic.Public
             GameEnd = 4,
             WrongCoordinates = 11,
             TheSameCoordinatesAgain = 12,
-            Exception = 100,
+            Exception = 100
         }
 
         public Coordinate Coordinate;

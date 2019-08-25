@@ -1,5 +1,4 @@
-﻿using System;
-using Battleships.Console.Output;
+﻿using Battleships.Console.Output;
 using Battleships.Logic.Coordinates;
 using Battleships.Logic.Public;
 using Moq;
@@ -34,7 +33,7 @@ namespace Battleships.Console.Tests.Output
         [Fact]
         public void DisplayException_SimpleRun_ExceptionIsDisplayed()
         {
-            var exception = new ApplicationException("Some exception");
+            var exception = "Some exception";
             _outputWriter.Setup(x => x.SetCursorPosition(0, 0));
             _outputWriter.Setup(x => x.Write("Some exception"));
 

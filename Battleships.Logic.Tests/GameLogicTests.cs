@@ -42,9 +42,11 @@ namespace Battleships.Logic.Tests
 
             var result = _sut.MakeNewMove("B4");
 
-            result.Coordinate.Column.Should().Be(1);
-            result.Coordinate.Row.Should().Be(3);
-            result.Description.Should().Be("Water");
+            result.Success.Should().BeTrue();
+            result.ErrorDescription.Should().BeNull();
+            result.Content.Coordinate.Column.Should().Be(1);
+            result.Content.Coordinate.Row.Should().Be(3);
+            result.Content.Description.Should().Be("Water");
 
             _settingsCheckerMock.Verify(x => x.Check(), Times.Once);
             _gridBuilderMock.Verify(x => x.Build(), Times.Once);
@@ -63,8 +65,10 @@ namespace Battleships.Logic.Tests
 
             var result = _sut.MakeNewMove("AA");
 
-            result.Kind.Should().Be(ShotResult.Kinds.WrongCoordinates);
-            result.Description.Should().Be("Expected coordinate are one letter and number (from 1 to 999).");
+            result.Success.Should().BeTrue();
+            result.ErrorDescription.Should().BeNull();
+            result.Content.Kind.Should().Be(ShotResult.Kinds.WrongCoordinates);
+            result.Content.Description.Should().Be("Expected coordinate are one letter and number (from 1 to 999).");
 
             _settingsCheckerMock.Verify(x => x.Check(), Times.Never);
             _gridBuilderMock.Verify(x => x.Build(), Times.Never);
@@ -86,8 +90,10 @@ namespace Battleships.Logic.Tests
 
             var result = _sut.StartNewGame();
 
-            result.ColumnCount.Should().Be(10);
-            result.RowCount.Should().Be(8);
+            result.Success.Should().BeTrue();
+            result.ErrorDescription.Should().BeNull();
+            result.Content.ColumnCount.Should().Be(10);
+            result.Content.RowCount.Should().Be(8);
 
             _settingsCheckerMock.Verify(x => x.Check(), Times.Once);
             _gridBuilderMock.Verify(x => x.Build(), Times.Once);
@@ -95,14 +101,16 @@ namespace Battleships.Logic.Tests
         }
 
         [Fact]
-        public void StartNewGame_IssueWithConfiguration_ExceptionWillBeThrown()
+        public void StartNewGame_IssueWithConfiguration_ErrorResponse()
         {
             _settingsCheckerMock.Setup(x => x.Check())
                 .Throws(new ApplicationException("Some issue with settings."));
 
-            Action act = () => _sut.StartNewGame();
+            var result = _sut.StartNewGame();
 
-            act.Should().Throw<ApplicationException>().WithMessage("Some issue with settings.");
+            result.Success.Should().BeFalse();
+            result.Content.Should().BeNull();
+            result.ErrorDescription.Should().Be("Some issue with settings.");
 
             _settingsCheckerMock.Verify(x => x.Check(), Times.Once);
             _gridBuilderMock.Verify(x => x.Build(), Times.Never);
