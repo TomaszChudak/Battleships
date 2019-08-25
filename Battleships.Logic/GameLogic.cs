@@ -1,4 +1,5 @@
-﻿using Battleships.Logic.Coordinates;
+﻿using System;
+using Battleships.Logic.Coordinates;
 using Battleships.Logic.Grid;
 using Battleships.Logic.Public;
 using Battleships.Logic.Settings;
@@ -27,7 +28,9 @@ namespace Battleships.Logic
 
         public GridSize StartNewGame()
         {
-            _settingsChecker.Check();
+            var validationResult = _settingsChecker.Check();
+            if (validationResult?.ErrorMessage != null)
+                throw new ApplicationException(validationResult.ErrorMessage);
 
             _grid = _gridBuilder.Build();
 

@@ -28,10 +28,11 @@ namespace Battleships.Logic.Tests
         [Fact]
         public void MakeNewMove_RightCoordinates_ExampleWaterAnswer()
         {
+            _settingsCheckerMock.Setup(x => x.Check())
+                .Returns(ValidationResult.Success);
             var coordinate = new Coordinate('B', "4");
             _coordinateParserMock.Setup(x => x.TryParse("B4", out coordinate))
                 .Returns(ValidationResult.Success);
-            _settingsCheckerMock.Setup(x => x.Check());
             var grid = new Logic.Grid.Grid();
             grid.Build(10, 8);
             _gridBuilderMock.Setup(x => x.Build())
@@ -76,7 +77,8 @@ namespace Battleships.Logic.Tests
         [Fact]
         public void StartNewGame_EvertyhingOk_RightGridSize()
         {
-            _settingsCheckerMock.Setup(x => x.Check());
+            _settingsCheckerMock.Setup(x => x.Check())
+                .Returns(ValidationResult.Success);
             var grid = new Logic.Grid.Grid();
             grid.Build(10, 8);
             _gridBuilderMock.Setup(x => x.Build())

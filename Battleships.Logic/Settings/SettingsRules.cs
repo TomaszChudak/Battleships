@@ -2,6 +2,9 @@
 {
     class SettingsRules
     {
+        // setting file
+        internal const string SettingFileName = "appsettings.json";
+
         // Grid / RowCount section
         internal const int MinimalGridRowCount = 10;
         internal const int MaximalGridRowCount = 20;

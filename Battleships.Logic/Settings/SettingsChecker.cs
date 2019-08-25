@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Battleships.Logic.Helpers;
 using Microsoft.Extensions.Options;
@@ -7,7 +9,7 @@ namespace Battleships.Logic.Settings
 {
     internal interface ISettingsChecker
     {
-        void Check();
+        ValidationResult Check();
     }
 
     internal class SettingsChecker : ISettingsChecker
@@ -21,76 +23,99 @@ namespace Battleships.Logic.Settings
             _fileWrapper = fileWrapper;
         }
 
-        public void Check()
+        public ValidationResult Check()
+        {
+            var listCheckSettingRules = new List<CheckSettingRule>
+            {
+                CheckIsFileExists,
+                CheckAutoParsing,
+                CheckGridSettings,
+                CheckShipTypes
+            };
+
+            foreach (var rule in listCheckSettingRules)
+            {
+                var validationResult = rule();
+                if (validationResult != ValidationResult.Success)
+                    return new ValidationResult($"An issue with settings in {SettingsRules.SettingFileName} file has been found. {validationResult.ErrorMessage}");
+            }
+
+            return ValidationResult.Success;
+        }
+
+        private ValidationResult CheckIsFileExists()
+        {
+            return _fileWrapper.Exists(SettingsRules.SettingFileName)
+                ? ValidationResult.Success
+                : new ValidationResult($"No {SettingsRules.SettingFileName} file was found.");
+        }
+
+        private ValidationResult CheckAutoParsing()
         {
             try
             {
-                CheckIsFileExists();
-                CheckAutoParsing();
-                CheckGridSettings();
-                CheckShipTypes();
+                var value = _config.Value;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new ApplicationException($"An issue with settings in appsettings.json file has been found. {e.Message}");
+                return new ValidationResult(ex.Message);
             }
+
+            return ValidationResult.Success;
         }
 
-        private void CheckIsFileExists()
-        {
-            if (!_fileWrapper.Exists("appsettings.json"))
-                throw new ApplicationException("No appsettings.json file was found.");
-        }
-
-        private void CheckAutoParsing()
-        {
-            var value = _config.Value;
-        }
-
-        private void CheckGridSettings()
+        private ValidationResult CheckGridSettings()
         {
             if (_config.Value.Grid == null)
-                throw new ApplicationException("Lack of Grid setting.");
+                return new ValidationResult("Lack of Grid setting.");
 
             if (_config.Value.Grid.RowCount == null)
-                throw new ApplicationException("Lack of Grid -> RowCount setting.");
+                return new ValidationResult("Lack of Grid -> RowCount setting.");
 
             if (_config.Value.Grid.ColumnCount == null)
-                throw new ApplicationException("Lack of Grid -> ColumnCount setting.");
+                return new ValidationResult("Lack of Grid -> ColumnCount setting.");
 
             if (_config.Value.Grid.RowCount < SettingsRules.MinimalGridRowCount
                 || _config.Value.Grid.RowCount > SettingsRules.MaximalGridRowCount)
-                throw new ApplicationException($"Grid -> RowCount should be between {SettingsRules.MinimalGridRowCount} and {SettingsRules.MaximalGridRowCount}.");
+                return new ValidationResult($"Grid -> RowCount should be between {SettingsRules.MinimalGridRowCount} and {SettingsRules.MaximalGridRowCount}.");
 
             if (_config.Value.Grid.ColumnCount < SettingsRules.MinimalGridColumnCount
                 || _config.Value.Grid.ColumnCount > SettingsRules.MaximalGridColumnCount)
-                throw new ApplicationException($"Grid -> ColumnCount should be between {SettingsRules.MinimalGridColumnCount} and {SettingsRules.MaximalGridColumnCount}.");
+                return new ValidationResult($"Grid -> ColumnCount should be between {SettingsRules.MinimalGridColumnCount} and {SettingsRules.MaximalGridColumnCount}.");
+
+            return ValidationResult.Success;
         }
 
-        private void CheckShipTypes()
+        private ValidationResult CheckShipTypes()
         {
             if (_config.Value.ShipTypes == null)
-                throw new ApplicationException("Lack of ShipTypes setting.");
+                return new ValidationResult("Lack of ShipTypes setting.");
 
             if (!_config.Value.ShipTypes.Any())
-                throw new ApplicationException("Lack of any ship type in ShipTypes setting.");
+                return new ValidationResult("Lack of any ship type in ShipTypes setting.");
 
             foreach (var shipType in _config.Value.ShipTypes)
             {
                 if (shipType.Size == null)
-                    throw new ApplicationException($"Lack of ShipTypes -> Size of '{shipType.Name}' setting.");
+                    return new ValidationResult($"Lack of ShipTypes -> Size of '{shipType.Name}' setting.");
 
-                if(shipType.Size < SettingsRules.MinimalShipTypeSize
-                   || shipType.Size > SettingsRules.MaximalShipTypeSize)
-                    throw new ApplicationException($"ShipTypes -> Size of '{shipType.Name}' should be between {SettingsRules.MinimalShipTypeSize} and {SettingsRules.MaximalShipTypeSize}.");
+                if (shipType.Size < SettingsRules.MinimalShipTypeSize
+                    || shipType.Size > SettingsRules.MaximalShipTypeSize)
+                    return new ValidationResult(
+                        $"ShipTypes -> Size of '{shipType.Name}' should be between {SettingsRules.MinimalShipTypeSize} and {SettingsRules.MaximalShipTypeSize}.");
 
                 if (shipType.Count == null)
-                    throw new ApplicationException($"Lack of ShipTypes -> Count of '{shipType.Name}' setting.");
+                    return new ValidationResult($"Lack of ShipTypes -> Count of '{shipType.Name}' setting.");
 
                 if (shipType.Count < SettingsRules.MinimalShipCount
-                   || shipType.Count > SettingsRules.MaximalShipCount)
-                    throw new ApplicationException($"ShipTypes -> Count of '{shipType.Name}' should be between {SettingsRules.MinimalShipCount} and {SettingsRules.MaximalShipCount}.");
+                    || shipType.Count > SettingsRules.MaximalShipCount)
+                    return new ValidationResult(
+                        $"ShipTypes -> Count of '{shipType.Name}' should be between {SettingsRules.MinimalShipCount} and {SettingsRules.MaximalShipCount}.");
             }
+
+            return ValidationResult.Success;
         }
+
+        private delegate ValidationResult CheckSettingRule();
     }
 }

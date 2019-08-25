@@ -36,7 +36,7 @@ namespace Battleships.Logic
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile(SettingsRules.SettingFileName, optional: true, reloadOnChange: true)
                 .Build();
 
             serviceCollection.AddOptions();
