@@ -5,7 +5,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace Battleships.Logic.Tests.Helpers
+namespace Battleships.Logic.Tests.Coordinates
 {
     public class CoordinateParserTests
     {

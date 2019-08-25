@@ -2,7 +2,7 @@ using Battleships.Logic.Coordinates;
 using FluentAssertions;
 using Xunit;
 
-namespace Battleships.Logic.Tests.Features
+namespace Battleships.Logic.Tests.Coordinates
 {
     public class CoordinateTests
     {
