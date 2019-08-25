@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Battleships.Logic.Coordinates;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: InternalsVisibleTo("Battleships.Logic.Tests")]
@@ -24,6 +25,7 @@ namespace Battleships.Logic
             serviceCollection.AddSingleton<IGridBuilder, GridBuilder>();
             serviceCollection.AddSingleton<IShipFactory, ShipFactory>();
             serviceCollection.AddSingleton<ICoordinateParser, CoordinateParser>();
+            serviceCollection.AddSingleton<ICoordinateValidator, CoordinateValidator>();
 
             SetConfiguration(serviceCollection);
 

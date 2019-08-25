@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Battleships.Logic.Features;
+using Battleships.Logic.Coordinates;
 using Battleships.Logic.Grid;
 using Battleships.Logic.Public;
 using Battleships.Logic.Settings;
@@ -34,7 +34,7 @@ namespace Battleships.Logic.Tests.Grid
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 5},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 5}},
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 5}}
                 });
             _gridMock.Setup(x => x.Build(10, 5));
             var ship = new Ship("Battleship", new Coordinate(0, 0), true, 5);
@@ -62,7 +62,7 @@ namespace Battleships.Logic.Tests.Grid
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 5},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 5}},
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 5}}
                 });
             _gridMock.Setup(x => x.Build(10, 5));
             var ship = new Ship("Battleship", new Coordinate(0, 0), true, 5);
@@ -125,7 +125,7 @@ namespace Battleships.Logic.Tests.Grid
                 .Returns(new AppSettings
                 {
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 5},
-                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}},
+                    ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = 5, Count = 1}}
                 });
             _gridMock.Setup(x => x.Build(10, 5));
             var ship = new Ship("Battleship", new Coordinate(0, 0), true, 5);

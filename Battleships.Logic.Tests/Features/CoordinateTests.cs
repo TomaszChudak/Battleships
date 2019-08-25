@@ -1,4 +1,4 @@
-using Battleships.Logic.Features;
+using Battleships.Logic.Coordinates;
 using FluentAssertions;
 using Xunit;
 

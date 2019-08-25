@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Battleships.Logic.Features;
+using Battleships.Logic.Coordinates;
 using Battleships.Logic.Public;
 using Battleships.Logic.Ships;
 using FluentAssertions;

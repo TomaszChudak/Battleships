@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Battleships.Logic.Features;
+using Battleships.Logic.Coordinates;
 using Battleships.Logic.Helpers;
 using Battleships.Logic.Settings;
 using Microsoft.Extensions.Options;

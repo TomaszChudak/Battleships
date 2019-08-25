@@ -1,12 +1,12 @@
-﻿using Battleships.Logic.Features;
+﻿using Battleships.Logic.Coordinates;
 using Battleships.Logic.Public;
 
 namespace Battleships.Console.Output
 {
     internal interface ICursorHelper
     {
-        void SetGridSize(GridSize gridSize);
         int TextResultTop { get; }
+        void SetGridSize(GridSize gridSize);
         int GetTopForCoordinate(Coordinate coordinate);
         int GetLeftForCoordinate(Coordinate coordinate);
     }

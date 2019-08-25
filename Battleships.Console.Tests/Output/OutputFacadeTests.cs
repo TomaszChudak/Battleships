@@ -1,8 +1,8 @@
-﻿using Battleships.Console.Output;
-using Battleships.Logic.Features;
+﻿using System;
+using Battleships.Console.Output;
+using Battleships.Logic.Coordinates;
 using Battleships.Logic.Public;
 using Moq;
-using System;
 using Xunit;
 
 namespace Battleships.Console.Tests.Output
@@ -18,7 +18,8 @@ namespace Battleships.Console.Tests.Output
             _soundPlayerMock = new Mock<ISoundPlayer>(MockBehavior.Strict);
             _outputWriter = new Mock<IOutputWriter>(MockBehavior.Strict);
 
-            _sut = new OutputFacade(_cursorHelperMock.Object, _gridPainterMock.Object, _gridResultPainterMock.Object, _textResultDisplayerMock.Object, _soundPlayerMock.Object, _outputWriter.Object);
+            _sut = new OutputFacade(_cursorHelperMock.Object, _gridPainterMock.Object, _gridResultPainterMock.Object, _textResultDisplayerMock.Object, _soundPlayerMock.Object,
+                _outputWriter.Object);
         }
 
         private readonly Mock<ICursorHelper> _cursorHelperMock;
@@ -29,6 +30,26 @@ namespace Battleships.Console.Tests.Output
         private readonly Mock<IOutputWriter> _outputWriter;
 
         private readonly IOutputFacade _sut;
+
+        [Fact]
+        public void DisplayException_SimpleRun_ExceptionIsDisplayed()
+        {
+            var exception = new ApplicationException("Some exception");
+            _outputWriter.Setup(x => x.SetCursorPosition(0, 0));
+            _outputWriter.Setup(x => x.Write("Some exception"));
+
+            _sut.DisplayException(exception);
+
+            _cursorHelperMock.Verify(x => x.SetGridSize(It.IsAny<GridSize>()), Times.Never);
+            _gridPainterMock.Verify(x => x.PaintNewGrid(It.IsAny<GridSize>()), Times.Never);
+            _gridResultPainterMock.Verify(x => x.PaintResult(It.IsAny<ShotResult>()), Times.Never);
+            _textResultDisplayerMock.Verify(x => x.DisplayResult(It.IsAny<ShotResult>()), Times.Never);
+            _soundPlayerMock.Verify(x => x.PlayResult(It.IsAny<ShotResult>()), Times.Never);
+            _outputWriter.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _outputWriter.Verify(x => x.SetCursorPosition(0, 0), Times.Once);
+            _outputWriter.Verify(x => x.Write(It.IsAny<string>()), Times.Once);
+            _outputWriter.Verify(x => x.Write("Some exception"), Times.Once);
+        }
 
         [Fact]
         public void MarkAndDisplayResult_SimpleRun_ResultIsPaintedAndDescribed()
@@ -84,26 +105,6 @@ namespace Battleships.Console.Tests.Output
             _textResultDisplayerMock.Verify(x => x.DisplayResult(It.IsAny<ShotResult>()), Times.Once);
             _textResultDisplayerMock.Verify(x => x.DisplayResult(null), Times.Once);
             _soundPlayerMock.Verify(x => x.PlayResult(It.IsAny<ShotResult>()), Times.Never);
-        }
-
-        [Fact]
-        public void DisplayException_SimpleRun_ExceptionIsDisplayed()
-        {
-            var exception = new ApplicationException("Some exception");
-            _outputWriter.Setup(x => x.SetCursorPosition(0, 0));
-            _outputWriter.Setup(x => x.Write("Some exception"));
-
-            _sut.DisplayException(exception);
-
-            _cursorHelperMock.Verify(x => x.SetGridSize(It.IsAny<GridSize>()), Times.Never);
-            _gridPainterMock.Verify(x => x.PaintNewGrid(It.IsAny<GridSize>()), Times.Never);
-            _gridResultPainterMock.Verify(x => x.PaintResult(It.IsAny<ShotResult>()), Times.Never);
-            _textResultDisplayerMock.Verify(x => x.DisplayResult(It.IsAny<ShotResult>()), Times.Never);
-            _soundPlayerMock.Verify(x => x.PlayResult(It.IsAny<ShotResult>()), Times.Never);
-            _outputWriter.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
-            _outputWriter.Verify(x => x.SetCursorPosition(0, 0), Times.Once);
-            _outputWriter.Verify(x => x.Write(It.IsAny<string>()), Times.Once);
-            _outputWriter.Verify(x => x.Write("Some exception"), Times.Once);
         }
     }
 }

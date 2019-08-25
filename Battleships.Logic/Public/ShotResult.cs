@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Battleships.Logic.Features;
+using Battleships.Logic.Coordinates;
 
 namespace Battleships.Logic.Public
 {

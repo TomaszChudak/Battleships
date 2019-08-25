@@ -1,5 +1,5 @@
 using System;
-using Battleships.Logic.Features;
+using Battleships.Logic.Coordinates;
 using Battleships.Logic.Grid;
 using Battleships.Logic.Public;
 using Battleships.Logic.Ships;
@@ -29,33 +29,21 @@ namespace Battleships.Logic.Tests.Grid
         }
 
         [Fact]
-        public void Shot_ShipIsHit_InfoAboutHit()
+        public void Shot_LastShipIsSink_InfoAboutSink()
         {
             _sut.Build(10, 5);
-            _sut.TryPlaceShip(new Ship("Destroyer", new Coordinate(0, 3), true, 4));
+            var shipToSink = new Ship("Destroyer", new Coordinate(0, 3), true, 4);
+            _sut.TryPlaceShip(shipToSink);
 
-            var result = _sut.Shot(new Coordinate(2, 3));
+            _sut.Shot(new Coordinate(1, 3));
+            _sut.Shot(new Coordinate(3, 3));
+            _sut.Shot(new Coordinate(2, 3));
+            var result = _sut.Shot(new Coordinate(0, 3));
 
-            result.Coordinate.Should().Be(new Coordinate(2, 3));
-            result.Description.Should().Be("Destroyer has been hit.");
-            result.Kind.Should().Be(ShotResult.Kinds.Hit);
-            result.SinkShip.Should().BeNull();
-        }
-
-        [Fact]
-        public void Shot_WaterCoordinatesAreEnteredAgain_InfoAboutHit()
-        {
-            _sut.Build(10, 5);
-            _sut.TryPlaceShip(new Ship("Destroyer", new Coordinate(0, 3), true, 4));
-            _sut.Shot(new Coordinate(5, 3));
-
-            var result = _sut.Shot(new Coordinate(5, 3));
-
-            result.Coordinate.Should().Be(new Coordinate(5, 3));
-            result.Description.Should().Be("You have entered the same coordinates again");
-            result.Kind.Should().Be(ShotResult.Kinds.TheSameCoordinatesAgain);
-            result.SinkShip.Should().BeNull();
-            
+            result.Coordinate.Should().Be(new Coordinate(0, 3));
+            result.Description.Should().Be("Destroyer has been sink. You have WIN !!!");
+            result.Kind.Should().Be(ShotResult.Kinds.GameEnd);
+            result.SinkShip.Should().BeEquivalentTo(shipToSink.Coordinates);
         }
 
         [Fact]
@@ -74,21 +62,17 @@ namespace Battleships.Logic.Tests.Grid
         }
 
         [Fact]
-        public void Shot_LastShipIsSink_InfoAboutSink()
+        public void Shot_ShipIsHit_InfoAboutHit()
         {
             _sut.Build(10, 5);
-            var shipToSink = new Ship("Destroyer", new Coordinate(0, 3), true, 4);
-            _sut.TryPlaceShip(shipToSink);
+            _sut.TryPlaceShip(new Ship("Destroyer", new Coordinate(0, 3), true, 4));
 
-            _sut.Shot(new Coordinate(1, 3));
-            _sut.Shot(new Coordinate(3, 3));
-            _sut.Shot(new Coordinate(2, 3));
-            var result = _sut.Shot(new Coordinate(0, 3));
+            var result = _sut.Shot(new Coordinate(2, 3));
 
-            result.Coordinate.Should().Be(new Coordinate(0, 3));
-            result.Description.Should().Be("Destroyer has been sink. You have WIN !!!");
-            result.Kind.Should().Be(ShotResult.Kinds.GameEnd);
-            result.SinkShip.Should().BeEquivalentTo(shipToSink.Coordinates);
+            result.Coordinate.Should().Be(new Coordinate(2, 3));
+            result.Description.Should().Be("Destroyer has been hit.");
+            result.Kind.Should().Be(ShotResult.Kinds.Hit);
+            result.SinkShip.Should().BeNull();
         }
 
         [Fact]
@@ -124,6 +108,21 @@ namespace Battleships.Logic.Tests.Grid
         }
 
         [Fact]
+        public void Shot_WaterCoordinatesAreEnteredAgain_InfoAboutHit()
+        {
+            _sut.Build(10, 5);
+            _sut.TryPlaceShip(new Ship("Destroyer", new Coordinate(0, 3), true, 4));
+            _sut.Shot(new Coordinate(5, 3));
+
+            var result = _sut.Shot(new Coordinate(5, 3));
+
+            result.Coordinate.Should().Be(new Coordinate(5, 3));
+            result.Description.Should().Be("You have entered the same coordinates again");
+            result.Kind.Should().Be(ShotResult.Kinds.TheSameCoordinatesAgain);
+            result.SinkShip.Should().BeNull();
+        }
+
+        [Fact]
         public void Shot_WrongCoordinates_ThrowException()
         {
             _sut.Build(10, 5);
@@ -154,23 +153,23 @@ namespace Battleships.Logic.Tests.Grid
         }
 
         [Fact]
-        public void TryPlaceShip_SecondShipOverlapping_Fail()
-        {
-            _sut.Build(10, 5);
-            _sut.TryPlaceShip(new Ship("Destroyer", new Coordinate(0, 3), true, 4));
-
-            var result = _sut.TryPlaceShip(new Ship("Destroyer", new Coordinate(3, 0), false, 4));
-
-            result.Should().BeFalse();
-        }
-
-        [Fact]
         public void TryPlaceShip_SecondShipInNextToIt_Fail()
         {
             _sut.Build(10, 5);
             _sut.TryPlaceShip(new Ship("Destroyer", new Coordinate(0, 3), true, 4));
 
             var result = _sut.TryPlaceShip(new Ship("Destroyer", new Coordinate(0, 4), false, 4));
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void TryPlaceShip_SecondShipOverlapping_Fail()
+        {
+            _sut.Build(10, 5);
+            _sut.TryPlaceShip(new Ship("Destroyer", new Coordinate(0, 3), true, 4));
+
+            var result = _sut.TryPlaceShip(new Ship("Destroyer", new Coordinate(3, 0), false, 4));
 
             result.Should().BeFalse();
         }

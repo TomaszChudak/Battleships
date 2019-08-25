@@ -1,5 +1,5 @@
-﻿using Battleships.Logic.Grid;
-using Battleships.Logic.Helpers;
+﻿using Battleships.Logic.Coordinates;
+using Battleships.Logic.Grid;
 using Battleships.Logic.Public;
 using Battleships.Logic.Settings;
 
@@ -36,7 +36,9 @@ namespace Battleships.Logic
 
         public ShotResult MakeNewMove(string shotCoordinate)
         {
-            var coordinate = _coordinateParser.Parse(shotCoordinate);
+            var validationResult = _coordinateParser.TryParse(shotCoordinate, out var coordinate);
+            if (validationResult?.ErrorMessage != null)
+                return new ShotResult {Kind = ShotResult.Kinds.Exception, Description = validationResult.ErrorMessage};
 
             return _grid.Shot(coordinate);
         }

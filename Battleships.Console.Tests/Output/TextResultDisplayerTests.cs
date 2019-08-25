@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Battleships.Console.Output;
-using Battleships.Logic.Features;
+using Battleships.Logic.Coordinates;
 using Battleships.Logic.Public;
 using Moq;
 using Xunit;

@@ -1,18 +1,22 @@
 using System;
-using Battleships.Logic.Helpers;
+using System.ComponentModel.DataAnnotations;
+using Battleships.Logic.Coordinates;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace Battleships.Logic.Tests.Helpers
 {
     public class CoordinateParserTests
     {
-        private readonly ICoordinateParser _sut;
-
         public CoordinateParserTests()
         {
-            _sut = new CoordinateParser();
+            _coordinateValidatorMock = new Mock<ICoordinateValidator>(MockBehavior.Strict);
+            _sut = new CoordinateParser(_coordinateValidatorMock.Object);
         }
+
+        private readonly Mock<ICoordinateValidator> _coordinateValidatorMock;
+        private readonly ICoordinateParser _sut;
 
         [Theory]
         [InlineData("A1", 'A', "1")]
@@ -25,6 +29,9 @@ namespace Battleships.Logic.Tests.Helpers
         [InlineData("Z100", 'Z', "100")]
         public void Parse_SensibleCoordinate_ReturnRightResult(string coordinatesFromClient, char expectedColumn, string expectedRow)
         {
+            _coordinateValidatorMock.Setup(x => x.Validate(coordinatesFromClient))
+                .Returns(ValidationResult.Success);
+
             var result = _sut.Parse(coordinatesFromClient);
 
             result.ColumnChar.Should().Be(expectedColumn);
@@ -46,8 +53,7 @@ namespace Battleships.Logic.Tests.Helpers
         {
             Action act = () => _sut.Parse(coordinatesFromClient);
 
-            act.Should().Throw<ArgumentException>();
-
+            act.Should().Throw<Exception>();
         }
 
         [Fact]
@@ -55,8 +61,7 @@ namespace Battleships.Logic.Tests.Helpers
         {
             Action act = () => _sut.Parse(null);
 
-            act.Should().Throw<ArgumentNullException>();
-
+            act.Should().Throw<Exception>();
         }
     }
 }
