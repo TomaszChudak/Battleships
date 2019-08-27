@@ -8,7 +8,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace Battleships.Logic.Tests
+namespace Battleships.Logic.TestsVerify
 {
     public class GameLogicTests
     {
@@ -47,6 +47,13 @@ namespace Battleships.Logic.Tests
             result.Content.Coordinate.Column.Should().Be(1);
             result.Content.Coordinate.Row.Should().Be(3);
             result.Content.Description.Should().Be("Water");
+
+            _settingsCheckerMock.Verify(x => x.Check(), Times.Once);
+            _gridBuilderMock.Verify(x => x.Build(), Times.Once);
+            _coordinateParserMock.Verify(x => x.TryParse(It.IsAny<string>(), out coordinate), Times.Once);
+            _coordinateParserMock.Verify(x => x.TryParse("B4", out coordinate), Times.Once);
+            _coordinateParserMock.Verify(x => x.Parse(It.IsAny<string>()), Times.Never);
+            _coordinateParserMock.Verify(x => x.Parse("B4"), Times.Never);
         }
 
         [Fact]
@@ -62,6 +69,13 @@ namespace Battleships.Logic.Tests
             result.ErrorDescription.Should().BeNull();
             result.Content.Kind.Should().Be(ShotResult.Kinds.WrongCoordinates);
             result.Content.Description.Should().Be("Expected coordinate are one letter and number (from 1 to 999).");
+
+            _settingsCheckerMock.Verify(x => x.Check(), Times.Never);
+            _gridBuilderMock.Verify(x => x.Build(), Times.Never);
+            _coordinateParserMock.Verify(x => x.TryParse(It.IsAny<string>(), out coordinate), Times.Once);
+            _coordinateParserMock.Verify(x => x.TryParse("AA", out coordinate), Times.Once);
+            _coordinateParserMock.Verify(x => x.Parse(It.IsAny<string>()), Times.Never);
+            _coordinateParserMock.Verify(x => x.Parse("AA"), Times.Never);
         }
 
         [Fact]
@@ -80,6 +94,10 @@ namespace Battleships.Logic.Tests
             result.ErrorDescription.Should().BeNull();
             result.Content.ColumnCount.Should().Be(10);
             result.Content.RowCount.Should().Be(8);
+
+            _settingsCheckerMock.Verify(x => x.Check(), Times.Once);
+            _gridBuilderMock.Verify(x => x.Build(), Times.Once);
+            _coordinateParserMock.Verify(x => x.Parse(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
@@ -93,6 +111,10 @@ namespace Battleships.Logic.Tests
             result.Success.Should().BeFalse();
             result.Content.Should().BeNull();
             result.ErrorDescription.Should().Be("Some issue with settings.");
+
+            _settingsCheckerMock.Verify(x => x.Check(), Times.Once);
+            _gridBuilderMock.Verify(x => x.Build(), Times.Never);
+            _coordinateParserMock.Verify(x => x.Parse(It.IsAny<string>()), Times.Never);
         }
     }
 }

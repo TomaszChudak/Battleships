@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Battleships.Logic.Settings;
 using Battleships.Logic.Ships;
@@ -31,14 +30,14 @@ namespace Battleships.Logic.Grid
 
             foreach (var shipType in _config.Value.ShipTypes.OrderByDescending(x => x.Size))
                 for (var i = 0; i < shipType.Count; i++)
-                    for (var x = 0; x < 1000; x++)
-                    {
-                        var ship = _shipFactory.BuildShip(shipType.Name);
-                        if (_grid.TryPlaceShip(ship))
-                            break;
-                        if (x == 99)
-                            throw new ApplicationException("Can't find any place for new ship.");
-                    }
+                for (var x = 0; x < 1000; x++)
+                {
+                    var ship = _shipFactory.BuildShip(shipType.Name);
+                    if (_grid.TryPlaceShip(ship))
+                        break;
+                    if (x == 99)
+                        throw new ApplicationException("Can't find any place for new ship.");
+                }
 
             return _grid;
         }

@@ -32,20 +32,6 @@ namespace Battleships.Console.Tests.Output
             var shotResult = new ShotResult {Coordinate = new Coordinate(4, 4), Kind = ShotResult.Kinds.Hit, Description = "Shit has been hit."};
 
             _sut.DisplayResult(shotResult);
-
-            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(It.IsAny<Coordinate>()), Times.Never);
-            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(It.IsAny<Coordinate>()), Times.Never);
-            _cursorHelperMock.Verify(x => x.TextResultTop, Times.Exactly(3));
-            _outputWriterMock.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(3));
-            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 22), Times.Once);
-            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 23), Times.Once);
-            _outputWriterMock.Verify(x => x.SetCursorPosition(2, 23), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.IsAny<string>()), Times.Exactly(4));
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("E5"))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("->"))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("Shit has been hit."))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("End"))), Times.Never);
-            _outputWriterMock.Verify(x => x.WriteNewLine(), Times.Never);
         }
 
         [Fact]
@@ -60,20 +46,6 @@ namespace Battleships.Console.Tests.Output
             var shotResult = new ShotResult {Coordinate = new Coordinate(4, 4), Kind = ShotResult.Kinds.GameEnd, Description = "Shit has been sink. You have win."};
 
             _sut.DisplayResult(shotResult);
-
-            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(It.IsAny<Coordinate>()), Times.Never);
-            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(It.IsAny<Coordinate>()), Times.Never);
-            _cursorHelperMock.Verify(x => x.TextResultTop, Times.Exactly(3));
-            _outputWriterMock.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(3));
-            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 22), Times.Once);
-            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 23), Times.Once);
-            _outputWriterMock.Verify(x => x.SetCursorPosition(2, 23), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.IsAny<string>()), Times.Exactly(5));
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("E5"))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("->"))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("Shit has been sink. You have win."))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("End"))), Times.Once);
-            _outputWriterMock.Verify(x => x.WriteNewLine(), Times.Never);
         }
 
         [Fact]
@@ -93,20 +65,6 @@ namespace Battleships.Console.Tests.Output
             };
 
             _sut.DisplayResult(shotResult);
-
-            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(It.IsAny<Coordinate>()), Times.Never);
-            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(It.IsAny<Coordinate>()), Times.Never);
-            _cursorHelperMock.Verify(x => x.TextResultTop, Times.Exactly(3));
-            _outputWriterMock.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(3));
-            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 22), Times.Once);
-            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 23), Times.Once);
-            _outputWriterMock.Verify(x => x.SetCursorPosition(2, 23), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.IsAny<string>()), Times.Exactly(4));
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("E5"))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("->"))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("Shit has been sink."))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("End"))), Times.Never);
-            _outputWriterMock.Verify(x => x.WriteNewLine(), Times.Never);
         }
 
         [Fact]
@@ -121,20 +79,6 @@ namespace Battleships.Console.Tests.Output
             var shotResult = new ShotResult {Coordinate = new Coordinate(5, 5), Description = "Water.", Kind = ShotResult.Kinds.Water};
 
             _sut.DisplayResult(shotResult);
-
-            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(It.IsAny<Coordinate>()), Times.Never);
-            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(It.IsAny<Coordinate>()), Times.Never);
-            _cursorHelperMock.Verify(x => x.TextResultTop, Times.Exactly(3));
-            _outputWriterMock.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(3));
-            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 22), Times.Once);
-            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 23), Times.Once);
-            _outputWriterMock.Verify(x => x.SetCursorPosition(2, 23), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.IsAny<string>()), Times.Exactly(4));
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("F6"))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("->"))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("Water."))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("End"))), Times.Never);
-            _outputWriterMock.Verify(x => x.WriteNewLine(), Times.Never);
         }
 
         [Fact]
@@ -149,19 +93,6 @@ namespace Battleships.Console.Tests.Output
             var shotResult = new ShotResult {Coordinate = null, Description = "Wrong coordinates.", Kind = ShotResult.Kinds.Exception};
 
             _sut.DisplayResult(shotResult);
-
-            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(It.IsAny<Coordinate>()), Times.Never);
-            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(It.IsAny<Coordinate>()), Times.Never);
-            _cursorHelperMock.Verify(x => x.TextResultTop, Times.Exactly(3));
-            _outputWriterMock.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(3));
-            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 22), Times.Once);
-            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 23), Times.Once);
-            _outputWriterMock.Verify(x => x.SetCursorPosition(2, 23), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.IsAny<string>()), Times.Exactly(4));
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("->"))), Times.Never);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("Wrong coordinates."))), Times.Once);
-            _outputWriterMock.Verify(x => x.Write(It.Is<string>(y => y.Contains("End"))), Times.Never);
-            _outputWriterMock.Verify(x => x.WriteNewLine(), Times.Never);
         }
     }
 }

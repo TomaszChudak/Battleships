@@ -3,7 +3,7 @@ using Battleships.Logic.Public;
 using Moq;
 using Xunit;
 
-namespace Battleships.Console.Tests.Output
+namespace Battleships.Console.TestsVerify.Output
 {
     public class GridPainterTests
     {
@@ -28,6 +28,11 @@ namespace Battleships.Console.Tests.Output
             var gridSize = new GridSize(columnCount, rowCount);
 
             _sut.PaintNewGrid(gridSize);
+
+            _outputWriterMock.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _outputWriterMock.Verify(x => x.SetCursorPosition(0, 0), Times.Once);
+            _outputWriterMock.Verify(x => x.Write(It.IsAny<string>()), Times.Exactly(2 + 2 * columnCount + rowCount * (5 + columnCount * 2) - (rowCount >= 10 ? 1 : 0)));
+            _outputWriterMock.Verify(x => x.WriteNewLine(), Times.Exactly(2 + rowCount * 2));
         }
     }
 }

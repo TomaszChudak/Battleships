@@ -5,7 +5,7 @@ using Battleships.Logic.Public;
 using Moq;
 using Xunit;
 
-namespace Battleships.Console.Tests
+namespace Battleships.Console.TestsVerify
 {
     public class DispatcherTests
     {
@@ -34,6 +34,15 @@ namespace Battleships.Console.Tests
                 .Returns(null);
 
             _sut.PlayGame();
+
+            _gameLogicMock.Verify(x => x.StartNewGame(), Times.Once);
+            _outputFacadeMock.Verify(x => x.PaintNewGrid(It.IsAny<GridSize>()), Times.Never);
+            _inputReaderMock.Verify(x => x.ReadUserCommand(), Times.Never);
+            _gameLogicMock.Verify(x => x.MakeNewMove(It.IsAny<string>()), Times.Never);
+            _outputFacadeMock.Verify(x => x.MarkAndDisplayResult(It.IsAny<ShotResult>()), Times.Never);
+            _outputFacadeMock.Verify(x => x.DisplayException(It.IsAny<string>()), Times.Once);
+            _outputFacadeMock.Verify(x => x.DisplayException(exception), Times.Once);
+            _inputReaderMock.Verify(x => x.ReadUserKey(), Times.Once);
         }
 
         [Fact]
@@ -55,6 +64,14 @@ namespace Battleships.Console.Tests
                 .Returns(null);
 
             _sut.PlayGame();
+
+            _gameLogicMock.Verify(x => x.StartNewGame(), Times.Once);
+            _outputFacadeMock.Verify(x => x.PaintNewGrid(It.IsAny<GridSize>()), Times.Once);
+            _inputReaderMock.Verify(x => x.ReadUserCommand(), Times.Exactly(2));
+            _gameLogicMock.Verify(x => x.MakeNewMove(It.IsAny<string>()), Times.Exactly(2));
+            _outputFacadeMock.Verify(x => x.MarkAndDisplayResult(It.IsAny<ShotResult>()), Times.Exactly(2));
+            _inputReaderMock.Verify(x => x.ReadUserKey(), Times.Once);
+            _outputFacadeMock.Verify(x => x.DisplayException(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
@@ -76,6 +93,14 @@ namespace Battleships.Console.Tests
                 .Returns(null);
 
             _sut.PlayGame();
+
+            _gameLogicMock.Verify(x => x.StartNewGame(), Times.Once);
+            _outputFacadeMock.Verify(x => x.PaintNewGrid(It.IsAny<GridSize>()), Times.Once);
+            _inputReaderMock.Verify(x => x.ReadUserCommand(), Times.Exactly(2));
+            _gameLogicMock.Verify(x => x.MakeNewMove(It.IsAny<string>()), Times.Exactly(2));
+            _outputFacadeMock.Verify(x => x.MarkAndDisplayResult(It.IsAny<ShotResult>()), Times.Exactly(2));
+            _inputReaderMock.Verify(x => x.ReadUserKey(), Times.Once);
+            _outputFacadeMock.Verify(x => x.DisplayException(It.IsAny<string>()), Times.Never);
         }
     }
 }

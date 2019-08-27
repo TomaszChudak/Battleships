@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: InternalsVisibleTo("Battleships.Console.Tests")]
+[assembly: InternalsVisibleTo("Battleships.Console.TestsVerify")]
 
 namespace Battleships.Console
 {

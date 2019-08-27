@@ -10,6 +10,7 @@ using Battleships.Logic.Coordinates;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: InternalsVisibleTo("Battleships.Logic.Tests")]
+[assembly: InternalsVisibleTo("Battleships.Logic.TestsVerify")]
 
 namespace Battleships.Logic
 {

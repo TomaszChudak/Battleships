@@ -5,7 +5,7 @@ using Battleships.Logic.Public;
 using Moq;
 using Xunit;
 
-namespace Battleships.Console.Tests.Output
+namespace Battleships.Console.TestsVerify.Output
 {
     public class GridResultPainterTests
     {
@@ -32,6 +32,16 @@ namespace Battleships.Console.Tests.Output
             var shotResult = new ShotResult {Coordinate = new Coordinate('B', "7"), Kind = ShotResult.Kinds.Hit, Description = "Shit has been hit."};
 
             _sut.PaintResult(shotResult);
+
+            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(It.IsAny<Coordinate>()), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(new Coordinate('B', "7")), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(It.IsAny<Coordinate>()), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(new Coordinate('B', "7")), Times.Once);
+            _outputWriterMock.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _outputWriterMock.Verify(x => x.SetCursorPosition(13, 16), Times.Once);
+            _outputWriterMock.Verify(x => x.Write(It.IsAny<string>()), Times.Once);
+            _outputWriterMock.Verify(x => x.Write("X"), Times.Once);
+            _outputWriterMock.Verify(x => x.WriteNewLine(), Times.Never);
         }
 
         [Fact]
@@ -61,6 +71,22 @@ namespace Battleships.Console.Tests.Output
             };
 
             _sut.PaintResult(shotResult);
+
+            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(It.IsAny<Coordinate>()), Times.Exactly(3));
+            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(new Coordinate('G', "7")), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(new Coordinate('G', "8")), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(new Coordinate('G', "9")), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(It.IsAny<Coordinate>()), Times.Exactly(3));
+            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(new Coordinate('G', "7")), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(new Coordinate('G', "8")), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(new Coordinate('G', "9")), Times.Once);
+            _outputWriterMock.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(3));
+            _outputWriterMock.Verify(x => x.SetCursorPosition(33, 19), Times.Once);
+            _outputWriterMock.Verify(x => x.SetCursorPosition(33, 20), Times.Once);
+            _outputWriterMock.Verify(x => x.SetCursorPosition(33, 21), Times.Once);
+            _outputWriterMock.Verify(x => x.Write(It.IsAny<string>()), Times.Exactly(3));
+            _outputWriterMock.Verify(x => x.Write("#"), Times.Exactly(3));
+            _outputWriterMock.Verify(x => x.WriteNewLine(), Times.Never);
         }
 
         [Fact]
@@ -75,6 +101,16 @@ namespace Battleships.Console.Tests.Output
             var shotResult = new ShotResult {Coordinate = new Coordinate('F', "6"), Description = "Water.", Kind = ShotResult.Kinds.Water};
 
             _sut.PaintResult(shotResult);
+
+            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(It.IsAny<Coordinate>()), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(new Coordinate('F', "6")), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(It.IsAny<Coordinate>()), Times.Once);
+            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(new Coordinate('F', "6")), Times.Once);
+            _outputWriterMock.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _outputWriterMock.Verify(x => x.SetCursorPosition(29, 12), Times.Once);
+            _outputWriterMock.Verify(x => x.Write(It.IsAny<string>()), Times.Once);
+            _outputWriterMock.Verify(x => x.Write("."), Times.Once);
+            _outputWriterMock.Verify(x => x.WriteNewLine(), Times.Never);
         }
 
         [Fact]
@@ -83,6 +119,12 @@ namespace Battleships.Console.Tests.Output
             var shotResult = new ShotResult {Coordinate = null, Description = "Wrong coordinates.", Kind = ShotResult.Kinds.Exception};
 
             _sut.PaintResult(shotResult);
+
+            _cursorHelperMock.Verify(x => x.GetLeftForCoordinate(It.IsAny<Coordinate>()), Times.Never);
+            _cursorHelperMock.Verify(x => x.GetTopForCoordinate(It.IsAny<Coordinate>()), Times.Never);
+            _outputWriterMock.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+            _outputWriterMock.Verify(x => x.Write(It.IsAny<string>()), Times.Never);
+            _outputWriterMock.Verify(x => x.WriteNewLine(), Times.Never);
         }
     }
 }

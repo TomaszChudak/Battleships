@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Battleships.Logic.Tests.Settings
+namespace Battleships.Logic.TestsVerify.Settings
 {
     public class SettingsCheckerTests
     {
@@ -39,6 +39,8 @@ namespace Battleships.Logic.Tests.Settings
             var result = _sut.Check();
 
             result.Should().Be(ValidationResult.Success);
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Theory]
@@ -61,6 +63,8 @@ namespace Battleships.Logic.Tests.Settings
             result.ErrorMessage.Should()
                 .Be(
                     $"An issue with settings in {SettingsRules.SettingFileName} file has been found. ShipTypes -> Size of 'Battleship' should be between {SettingsRules.MinimalShipTypeSize} and {SettingsRules.MaximalShipTypeSize}.");
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         public static IEnumerable<object[]> GetAllShipCounts =>
@@ -81,6 +85,8 @@ namespace Battleships.Logic.Tests.Settings
             _sut = new SettingsChecker(_configMock.Object);
 
             _sut.Check();
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Theory]
@@ -103,6 +109,8 @@ namespace Battleships.Logic.Tests.Settings
             result.ErrorMessage.Should()
                 .Be(
                     $"An issue with settings in {SettingsRules.SettingFileName} file has been found. ShipTypes -> Count of 'Battleship' should be between {SettingsRules.MinimalShipCount} and {SettingsRules.MaximalShipCount}.");
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         public static IEnumerable<object[]> GetAllGridColumnCounts =>
@@ -123,6 +131,8 @@ namespace Battleships.Logic.Tests.Settings
             _sut = new SettingsChecker(_configMock.Object);
 
             _sut.Check();
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Theory]
@@ -146,6 +156,8 @@ namespace Battleships.Logic.Tests.Settings
             result.ErrorMessage.Should()
                 .Be(
                     $"An issue with settings in {SettingsRules.SettingFileName} file has been found. Grid -> ColumnCount should be between {SettingsRules.MinimalGridColumnCount} and {SettingsRules.MaximalGridColumnCount}.");
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         public static IEnumerable<object[]> GetAllGridRowCounts =>
@@ -166,6 +178,8 @@ namespace Battleships.Logic.Tests.Settings
             _sut = new SettingsChecker(_configMock.Object);
 
             _sut.Check();
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Theory]
@@ -187,6 +201,8 @@ namespace Battleships.Logic.Tests.Settings
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Grid -> RowCount should be between {SettingsRules.MinimalGridRowCount} and {SettingsRules.MaximalGridRowCount}.");
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
 
@@ -205,6 +221,8 @@ namespace Battleships.Logic.Tests.Settings
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of Grid -> ColumnCount setting.");
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
@@ -221,6 +239,8 @@ namespace Battleships.Logic.Tests.Settings
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of Grid setting.");
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
@@ -238,6 +258,8 @@ namespace Battleships.Logic.Tests.Settings
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of Grid -> RowCount setting.");
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
@@ -255,6 +277,8 @@ namespace Battleships.Logic.Tests.Settings
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of ShipTypes -> Count of 'Battleship' setting.");
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
@@ -272,6 +296,8 @@ namespace Battleships.Logic.Tests.Settings
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of ShipTypes -> Size of 'Battleship' setting.");
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
@@ -289,6 +315,8 @@ namespace Battleships.Logic.Tests.Settings
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. Lack of ShipTypes -> Size of 'Battleship' setting.");
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
 
         [Fact]
@@ -306,6 +334,8 @@ namespace Battleships.Logic.Tests.Settings
 
             result.Should().NotBe(ValidationResult.Success);
             result.ErrorMessage.Should().Be($"An issue with settings in {SettingsRules.SettingFileName} file has been found. All elements of setting file are missing or no {SettingsRules.SettingFileName} file has been found.");
+
+            _configMock.Verify(x => x.Value, Times.Exactly(2));
         }
 
         [Fact]
@@ -321,6 +351,8 @@ namespace Battleships.Logic.Tests.Settings
             _sut = new SettingsChecker(_configMock.Object);
 
             _sut.Check();
+
+            _configMock.Verify(x => x.Value, Times.AtLeast(1));
         }
     }
 }

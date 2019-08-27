@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Battleships.Logic.Tests.Ships
+namespace Battleships.Logic.TestsVerify.Ships
 {
     public class ShipFactoryTests
     {
@@ -35,6 +35,9 @@ namespace Battleships.Logic.Tests.Ships
             Action act = () => _sut.BuildShip("Boat");
 
             act.Should().Throw<InvalidOperationException>("Sequence contains no matching element");
+
+            _configMock.Verify(x => x.Value, Times.Once);
+            _randomWrapperMock.Verify(x => x.Next(It.IsAny<int>()), Times.Never);
         }
 
         [Theory]
@@ -61,6 +64,9 @@ namespace Battleships.Logic.Tests.Ships
             result.Size.Should().Be(size);
             result.Name.Should().Be("Battleship");
             result.Coordinates.Should().HaveCount(size);
+
+            _configMock.Verify(x => x.Value, Times.Exactly(3));
+            _randomWrapperMock.Verify(x => x.Next(It.IsAny<int>()), Times.Exactly(3));
         }
     }
 }

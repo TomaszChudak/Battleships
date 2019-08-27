@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Battleships.Logic.Tests.Grid
+namespace Battleships.Logic.TestsVerify.Grid
 {
     public class GridBuilderTests
     {
@@ -46,6 +46,13 @@ namespace Battleships.Logic.Tests.Grid
             Action act = () => _sut.Build();
 
             act.Should().Throw<ApplicationException>().WithMessage("Can't find any place for new ship.");
+
+            _configMock.Verify(x => x.Value, Times.Exactly(3));
+            _gridMock.Verify(x => x.Build(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _gridMock.Verify(x => x.Build(10, 5), Times.Once);
+            _shipFactoryMock.Verify(x => x.BuildShip(It.IsAny<string>()), Times.Exactly(100));
+            _shipFactoryMock.Verify(x => x.BuildShip("Battleship"), Times.Exactly(100));
+            _gridMock.Verify(x => x.TryPlaceShip(ship), Times.Exactly(100));
         }
 
         [Fact]
@@ -74,6 +81,13 @@ namespace Battleships.Logic.Tests.Grid
             result.Size.RowCount.Should().Be(5);
             result.Ships.Should().HaveCount(1);
             result.Ships.Should().Contain(x => x.Size == 5 && x.Name == "Battleship");
+
+            _configMock.Verify(x => x.Value, Times.Exactly(3));
+            _gridMock.Verify(x => x.Build(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _gridMock.Verify(x => x.Build(10, 5), Times.Once);
+            _shipFactoryMock.Verify(x => x.BuildShip(It.IsAny<string>()), Times.Exactly(5));
+            _shipFactoryMock.Verify(x => x.BuildShip("Battleship"), Times.Exactly(5));
+            _gridMock.Verify(x => x.TryPlaceShip(ship), Times.Exactly(5));
         }
 
         [Fact]
@@ -96,6 +110,12 @@ namespace Battleships.Logic.Tests.Grid
             result.Size.ColumnCount.Should().Be(10);
             result.Size.RowCount.Should().Be(5);
             result.Ships.Should().BeEmpty();
+
+            _configMock.Verify(x => x.Value, Times.Exactly(3));
+            _gridMock.Verify(x => x.Build(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _gridMock.Verify(x => x.Build(10, 5), Times.Once);
+            _shipFactoryMock.Verify(x => x.BuildShip(It.IsAny<string>()), Times.Never);
+            _gridMock.Verify(x => x.TryPlaceShip(It.IsAny<Ship>()), Times.Never);
         }
 
         [Fact]
@@ -124,6 +144,13 @@ namespace Battleships.Logic.Tests.Grid
             result.Size.RowCount.Should().Be(5);
             result.Ships.Should().HaveCount(1);
             result.Ships.Should().Contain(x => x.Size == 5 && x.Name == "Battleship");
+
+            _configMock.Verify(x => x.Value, Times.Exactly(3));
+            _gridMock.Verify(x => x.Build(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _gridMock.Verify(x => x.Build(10, 5), Times.Once);
+            _shipFactoryMock.Verify(x => x.BuildShip(It.IsAny<string>()), Times.Once);
+            _shipFactoryMock.Verify(x => x.BuildShip("Battleship"), Times.Once);
+            _gridMock.Verify(x => x.TryPlaceShip(ship), Times.Once);
         }
     }
 }

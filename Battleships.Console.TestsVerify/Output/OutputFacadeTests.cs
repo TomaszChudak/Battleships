@@ -4,7 +4,7 @@ using Battleships.Logic.Public;
 using Moq;
 using Xunit;
 
-namespace Battleships.Console.Tests.Output
+namespace Battleships.Console.TestsVerify.Output
 {
     public class OutputFacadeTests
     {
@@ -38,6 +38,16 @@ namespace Battleships.Console.Tests.Output
             _outputWriter.Setup(x => x.Write("Some exception"));
 
             _sut.DisplayException(exception);
+
+            _cursorHelperMock.Verify(x => x.SetGridSize(It.IsAny<GridSize>()), Times.Never);
+            _gridPainterMock.Verify(x => x.PaintNewGrid(It.IsAny<GridSize>()), Times.Never);
+            _gridResultPainterMock.Verify(x => x.PaintResult(It.IsAny<ShotResult>()), Times.Never);
+            _textResultDisplayerMock.Verify(x => x.DisplayResult(It.IsAny<ShotResult>()), Times.Never);
+            _soundPlayerMock.Verify(x => x.PlayResult(It.IsAny<ShotResult>()), Times.Never);
+            _outputWriter.Verify(x => x.SetCursorPosition(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _outputWriter.Verify(x => x.SetCursorPosition(0, 0), Times.Once);
+            _outputWriter.Verify(x => x.Write(It.IsAny<string>()), Times.Once);
+            _outputWriter.Verify(x => x.Write("Some exception"), Times.Once);
         }
 
         [Fact]
@@ -49,6 +59,15 @@ namespace Battleships.Console.Tests.Output
             _soundPlayerMock.Setup(x => x.PlayResult(shotResult));
 
             _sut.MarkAndDisplayResult(shotResult);
+
+            _cursorHelperMock.Verify(x => x.SetGridSize(It.IsAny<GridSize>()), Times.Never);
+            _gridPainterMock.Verify(x => x.PaintNewGrid(It.IsAny<GridSize>()), Times.Never);
+            _gridResultPainterMock.Verify(x => x.PaintResult(It.IsAny<ShotResult>()), Times.Once);
+            _gridResultPainterMock.Verify(x => x.PaintResult(shotResult), Times.Once);
+            _textResultDisplayerMock.Verify(x => x.DisplayResult(It.IsAny<ShotResult>()), Times.Once);
+            _textResultDisplayerMock.Verify(x => x.DisplayResult(shotResult), Times.Once);
+            _soundPlayerMock.Verify(x => x.PlayResult(It.IsAny<ShotResult>()), Times.Once);
+            _soundPlayerMock.Verify(x => x.PlayResult(shotResult), Times.Once);
         }
 
         [Fact]
@@ -58,6 +77,13 @@ namespace Battleships.Console.Tests.Output
             _textResultDisplayerMock.Setup(x => x.DisplayResult(shotResult));
 
             _sut.MarkAndDisplayResult(shotResult);
+
+            _cursorHelperMock.Verify(x => x.SetGridSize(It.IsAny<GridSize>()), Times.Never);
+            _gridPainterMock.Verify(x => x.PaintNewGrid(It.IsAny<GridSize>()), Times.Never);
+            _gridResultPainterMock.Verify(x => x.PaintResult(It.IsAny<ShotResult>()), Times.Never);
+            _textResultDisplayerMock.Verify(x => x.DisplayResult(It.IsAny<ShotResult>()), Times.Once);
+            _textResultDisplayerMock.Verify(x => x.DisplayResult(shotResult), Times.Once);
+            _soundPlayerMock.Verify(x => x.PlayResult(It.IsAny<ShotResult>()), Times.Never);
         }
 
         [Fact]
@@ -69,6 +95,15 @@ namespace Battleships.Console.Tests.Output
             _textResultDisplayerMock.Setup(x => x.DisplayResult(null));
 
             _sut.PaintNewGrid(gridSize);
+
+            _cursorHelperMock.Verify(x => x.SetGridSize(It.IsAny<GridSize>()), Times.Once);
+            _cursorHelperMock.Verify(x => x.SetGridSize(gridSize), Times.Once);
+            _gridPainterMock.Verify(x => x.PaintNewGrid(It.IsAny<GridSize>()), Times.Once);
+            _gridPainterMock.Verify(x => x.PaintNewGrid(gridSize), Times.Once);
+            _gridResultPainterMock.Verify(x => x.PaintResult(It.IsAny<ShotResult>()), Times.Never);
+            _textResultDisplayerMock.Verify(x => x.DisplayResult(It.IsAny<ShotResult>()), Times.Once);
+            _textResultDisplayerMock.Verify(x => x.DisplayResult(null), Times.Once);
+            _soundPlayerMock.Verify(x => x.PlayResult(It.IsAny<ShotResult>()), Times.Never);
         }
     }
 }
