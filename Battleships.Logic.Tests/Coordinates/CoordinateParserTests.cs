@@ -63,5 +63,51 @@ namespace Battleships.Logic.Tests.Coordinates
 
             act.Should().Throw<Exception>();
         }
+        
+        [Theory]
+        [InlineData("A1", 'A', "1")]
+        [InlineData(" A 1 ", 'A', "1")]
+        [InlineData("A10", 'A', "10")]
+        [InlineData("  B5  ", 'B', "5")]
+        [InlineData(" E6 ", 'E', "6")]
+        [InlineData("K8", 'K', "8")]
+        [InlineData("H99", 'H', "99")]
+        [InlineData("Z100", 'Z', "100")]
+        public void TryParse_SensibleCoordinateWith_ReturnRightResult(string coordinatesFromClient, char expectedColumn, string expectedRow)
+        {
+            _coordinateValidatorMock.Setup(x => x.Validate(coordinatesFromClient))
+                .Returns(ValidationResult.Success);
+
+            var result = _sut.TryParse(coordinatesFromClient, out var coordinate);
+
+            result.Should().Be(ValidationResult.Success);
+            coordinate.Should().Be(new Coordinate(expectedColumn, expectedRow));
+        }
+
+        [Theory]
+        [InlineData("A1", 'A', "1")]
+        [InlineData(" A 1 ", 'A', "1")]
+        [InlineData("A10", 'A', "10")]
+        [InlineData("  B5  ", 'B', "5")]
+        [InlineData(" E6 ", 'E', "6")]
+        [InlineData("K8", 'K', "8")]
+        [InlineData("H99", 'H', "99")]
+        [InlineData("Z100", 'Z', "100")]
+        public void TryParse_SensibleCoordinateWithCallBase_ReturnRightResult(string coordinatesFromClient, char expectedColumn, string expectedRow)
+        {
+            _coordinateValidatorMock.Setup(x => x.Validate(coordinatesFromClient))
+                .Returns(ValidationResult.Success);
+
+            var coordinateParserMock = new Mock<CoordinateParser>(_coordinateValidatorMock.Object);
+            coordinateParserMock.Setup(x => x.Parse(coordinatesFromClient));
+            coordinateParserMock.CallBase = true;
+
+            var result = coordinateParserMock.Object.TryParse(coordinatesFromClient, out var coordinate);
+
+            coordinateParserMock.Verify(x => x.Parse(coordinatesFromClient), Times.Once);
+
+            result.Should().Be(ValidationResult.Success);
+            coordinate.Should().Be(new Coordinate(expectedColumn, expectedRow));
+        }
     }
 }

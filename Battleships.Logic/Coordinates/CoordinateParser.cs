@@ -31,7 +31,7 @@ namespace Battleships.Logic.Coordinates
             return ValidationResult.Success;
         }
 
-        public Coordinate Parse(string coordinate)
+        public virtual Coordinate Parse(string coordinate)
         {
             var validationResult = _coordinateValidator.Validate(coordinate);
             if (validationResult != ValidationResult.Success)
