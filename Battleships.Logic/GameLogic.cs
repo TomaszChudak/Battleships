@@ -50,9 +50,12 @@ namespace Battleships.Logic
             {
                 var validationResult = _coordinateParser.TryParse(shotCoordinate, out var coordinate);
                 if (validationResult?.ErrorMessage != null)
-                    return new ResponseEnvelope<ShotResult> {Success = true, Content = new ShotResult {Kind = ShotResult.Kinds.WrongCoordinates, Description = validationResult.ErrorMessage}};
+                    return new ResponseEnvelope<ShotResult>
+                        {Success = true, Content = new ShotResult {Kind = ShotResult.Kinds.WrongCoordinates, Description = validationResult.ErrorMessage}};
 
-                return new ResponseEnvelope<ShotResult> {Success = true, Content = _grid.Shot(coordinate)};
+                var shotResult = _grid.Shot(coordinate);
+
+                return new ResponseEnvelope<ShotResult> {Success = true, Content = shotResult};
             }
             catch (Exception e)
             {

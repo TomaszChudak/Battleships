@@ -41,8 +41,7 @@ namespace Battleships.Console.Output
 
         private void PaintRowSeparator(int columnCount)
         {
-            _outputWriter.Write("-----");
-            for (var c = 0; c < columnCount; c++)
+            for (var c = 0; c <= columnCount; c++)
                 _outputWriter.Write("----");
             _outputWriter.WriteNewLine();
         }

@@ -118,7 +118,7 @@ namespace Battleships.Logic.Tests.Ships
         }
 
         [Fact]
-        public void Shot_WrongCoordinates_ShouldThrowException()
+        public void Shot_CoordinateDontBelongToShip_ShouldThrowException()
         {
             var ship = new Ship("Destroyer", new Coordinate(5, 5), true, 4);
 

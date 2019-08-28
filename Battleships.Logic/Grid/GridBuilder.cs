@@ -26,20 +26,37 @@ namespace Battleships.Logic.Grid
 
         public IGrid Build()
         {
-            _grid.Build(_config.Value.Grid.ColumnCount.Value, _config.Value.Grid.RowCount.Value);
+            for (var i = 0; i < 100; i++)
+            {
+                _grid.Build(_config.Value.Grid.ColumnCount.Value, _config.Value.Grid.RowCount.Value);
 
+                if (TrySetShipsOnGrid())
+                    return _grid;
+            }
+
+            throw new ApplicationException("Can't find any place for new ship.");
+        }
+
+        private bool TrySetShipsOnGrid()
+        {
             foreach (var shipType in _config.Value.ShipTypes.OrderByDescending(x => x.Size))
                 for (var i = 0; i < shipType.Count; i++)
-                for (var x = 0; x < 1000; x++)
-                {
-                    var ship = _shipFactory.BuildShip(shipType.Name);
-                    if (_grid.TryPlaceShip(ship))
-                        break;
-                    if (x == 99)
-                        throw new ApplicationException("Can't find any place for new ship.");
-                }
+                    if (!TryPlaceNextShip(shipType.Name))
+                        return false;
 
-            return _grid;
+            return true;
+        }
+
+        private bool TryPlaceNextShip(string shipTypeName)
+        {
+            for (var x = 0; x < 1000; x++)
+            {
+                var ship = _shipFactory.BuildShip(shipTypeName);
+                if (_grid.TryPlaceShip(ship))
+                    return true;
+            }
+
+            return false;
         }
     }
 }

@@ -5,17 +5,16 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace Battleships.Logic.TestsVerify.Coordinates
+namespace Battleships.Logic.Tests.Coordinates
 {
-    public class CoordinateParserTests
+    public class CoordinateParserIntegrationTests
     {
-        public CoordinateParserTests()
+        public CoordinateParserIntegrationTests()
         {
-            _coordinateValidatorMock = new Mock<ICoordinateValidator>(MockBehavior.Strict);
-            _sut = new CoordinateParser(_coordinateValidatorMock.Object);
+            var coordinateValidator = new CoordinateValidator();
+            _sut = new CoordinateParser(coordinateValidator);
         }
 
-        private readonly Mock<ICoordinateValidator> _coordinateValidatorMock;
         private readonly ICoordinateParser _sut;
 
         [Theory]
@@ -29,9 +28,6 @@ namespace Battleships.Logic.TestsVerify.Coordinates
         [InlineData("Z100", 'Z', "100")]
         public void Parse_SensibleCoordinate_ReturnRightResult(string coordinatesFromClient, char expectedColumn, string expectedRow)
         {
-            _coordinateValidatorMock.Setup(x => x.Validate(coordinatesFromClient))
-                .Returns(ValidationResult.Success);
-
             var result = _sut.Parse(coordinatesFromClient);
 
             result.ColumnChar.Should().Be(expectedColumn);
@@ -75,9 +71,6 @@ namespace Battleships.Logic.TestsVerify.Coordinates
         [InlineData("Z100", 'Z', "100")]
         public void TryParse_SensibleCoordinateWith_ReturnRightResult(string coordinatesFromClient, char expectedColumn, string expectedRow)
         {
-            _coordinateValidatorMock.Setup(x => x.Validate(coordinatesFromClient))
-                .Returns(ValidationResult.Success);
-
             var result = _sut.TryParse(coordinatesFromClient, out var coordinate);
 
             result.Should().Be(ValidationResult.Success);
@@ -85,29 +78,30 @@ namespace Battleships.Logic.TestsVerify.Coordinates
         }
 
         [Theory]
-        [InlineData("A1", 'A', "1")]
-        [InlineData(" A 1 ", 'A', "1")]
-        [InlineData("A10", 'A', "10")]
-        [InlineData("  B5  ", 'B', "5")]
-        [InlineData(" E6 ", 'E', "6")]
-        [InlineData("K8", 'K', "8")]
-        [InlineData("H99", 'H', "99")]
-        [InlineData("Z100", 'Z', "100")]
-        public void TryParse_SensibleCoordinateWithCallBase_ReturnRightResult(string coordinatesFromClient, char expectedColumn, string expectedRow)
+        [InlineData("")]
+        [InlineData("1")]
+        [InlineData("A")]
+        [InlineData("1A")]
+        [InlineData("AA")]
+        [InlineData("C-10")]
+        [InlineData("11")]
+        [InlineData("battleship")]
+        [InlineData("@3")]
+        [InlineData("&8")]
+        public void TryParse_WrongCoordinate_ReturnFalse(string coordinatesFromClient)
         {
-            _coordinateValidatorMock.Setup(x => x.Validate(coordinatesFromClient))
-                .Returns(ValidationResult.Success);
+            var result = _sut.TryParse(coordinatesFromClient, out var coordinate);
 
-            var coordinateParserMock = new Mock<CoordinateParser>(_coordinateValidatorMock.Object);
-            coordinateParserMock.Setup(x => x.Parse(coordinatesFromClient));
-            coordinateParserMock.CallBase = true;
+            result.Should().NotBe(ValidationResult.Success);
+            result.ErrorMessage.Should().Be("Wrong coordinate. Expected coordinate are one letter and number (from 1 to 999).");
+        }
 
-            var result = coordinateParserMock.Object.TryParse(coordinatesFromClient, out var coordinate);
+        public void TryParse_NullCoordinate_ReturnFalse()
+        {
+            var result = _sut.TryParse(null, out var coordinate);
 
-            result.Should().Be(ValidationResult.Success);
-            coordinate.Should().Be(new Coordinate(expectedColumn, expectedRow));
-
-            coordinateParserMock.Verify(x => x.Parse(coordinatesFromClient), Times.Once);
+            result.Should().NotBe(ValidationResult.Success);
+            result.ErrorMessage.Should().Be("Wrong coordinate. Expected coordinate are one letter and number (from 1 to 999).");
         }
     }
 }

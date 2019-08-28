@@ -47,12 +47,12 @@ namespace Battleships.Logic.TestsVerify.Grid
 
             act.Should().Throw<ApplicationException>().WithMessage("Can't find any place for new ship.");
 
-            _configMock.Verify(x => x.Value, Times.Exactly(3));
-            _gridMock.Verify(x => x.Build(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
-            _gridMock.Verify(x => x.Build(10, 5), Times.Once);
-            _shipFactoryMock.Verify(x => x.BuildShip(It.IsAny<string>()), Times.Exactly(100));
-            _shipFactoryMock.Verify(x => x.BuildShip("Battleship"), Times.Exactly(100));
-            _gridMock.Verify(x => x.TryPlaceShip(ship), Times.Exactly(100));
+            _configMock.Verify(x => x.Value, Times.AtLeast(10));
+            _gridMock.Verify(x => x.Build(It.IsAny<int>(), It.IsAny<int>()), Times.AtLeastOnce);
+            _gridMock.Verify(x => x.Build(10, 5), Times.AtLeastOnce);
+            _shipFactoryMock.Verify(x => x.BuildShip(It.IsAny<string>()), Times.AtLeast(100));
+            _shipFactoryMock.Verify(x => x.BuildShip("Battleship"), Times.AtLeast(100));
+            _gridMock.Verify(x => x.TryPlaceShip(ship), Times.AtLeast(100));
         }
 
         [Fact]

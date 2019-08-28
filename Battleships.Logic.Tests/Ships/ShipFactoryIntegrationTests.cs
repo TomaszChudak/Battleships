@@ -11,17 +11,16 @@ using Xunit;
 
 namespace Battleships.Logic.Tests.Ships
 {
-    public class ShipFactoryTests
+    public class ShipFactoryIntegrationTests
     {
         private readonly Mock<IOptions<AppSettings>> _configMock;
-        private readonly Mock<IRandomWrapper> _randomWrapperMock;
         private readonly IShipFactory _sut;
 
-        public ShipFactoryTests()
+        public ShipFactoryIntegrationTests()
         {
             _configMock = new Mock<IOptions<AppSettings>>(MockBehavior.Strict);
-            _randomWrapperMock = new Mock<IRandomWrapper>(MockBehavior.Strict);
-            _sut = new ShipFactory(_configMock.Object, _randomWrapperMock.Object);
+            var randomWrapper = new RandomWrapper();
+            _sut = new ShipFactory(_configMock.Object, randomWrapper);
         }
 
         [Fact]
@@ -50,12 +49,6 @@ namespace Battleships.Logic.Tests.Ships
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = size, Count = 1}},
                 });
-            _randomWrapperMock.Setup(x => x.Next(2))
-                .Returns(1);
-            _randomWrapperMock.Setup(x => x.Next(10 - size))
-                .Returns(4);
-            _randomWrapperMock.Setup(x => x.Next(10))
-                .Returns(6);
 
             var result = _sut.BuildShip("Battleship");
 
@@ -79,12 +72,6 @@ namespace Battleships.Logic.Tests.Ships
                     Grid = new GridSettings {ColumnCount = 10, RowCount = 10},
                     ShipTypes = new List<ShipTypeSettings> {new ShipTypeSettings {Name = "Battleship", Size = size, Count = 1}},
                 });
-            _randomWrapperMock.Setup(x => x.Next(2))
-                .Returns(1);
-            _randomWrapperMock.Setup(x => x.Next(10 - size))
-                .Returns(4);
-            _randomWrapperMock.Setup(x => x.Next(10))
-                .Returns(6);
 
             var result = _sut.BuildShip("Battleship");
 

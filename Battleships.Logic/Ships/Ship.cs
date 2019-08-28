@@ -11,8 +11,8 @@ namespace Battleships.Logic.Ships
         IReadOnlyList<Coordinate> Coordinates { get; }
         IReadOnlyList<Coordinate> MarginCoordinates { get; }
         int Size { get; }
-        ShotResult Shot(Coordinate coordinate);
         bool Sink { get; }
+        ShotResult Shot(Coordinate coordinate);
     }
 
     internal class Ship : IShip

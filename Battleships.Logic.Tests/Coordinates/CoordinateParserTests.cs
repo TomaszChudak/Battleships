@@ -104,10 +104,31 @@ namespace Battleships.Logic.Tests.Coordinates
 
             var result = coordinateParserMock.Object.TryParse(coordinatesFromClient, out var coordinate);
 
-            coordinateParserMock.Verify(x => x.Parse(coordinatesFromClient), Times.Once);
-
             result.Should().Be(ValidationResult.Success);
             coordinate.Should().Be(new Coordinate(expectedColumn, expectedRow));
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("1")]
+        [InlineData("A")]
+        [InlineData("1A")]
+        [InlineData("AA")]
+        [InlineData("C-10")]
+        [InlineData("11")]
+        [InlineData("battleship")]
+        [InlineData("@3")]
+        [InlineData("&8")]
+        [InlineData(null)]
+        public void TryParse_WrongCoordinate_ReturnFalse(string coordinatesFromClient)
+        {
+            _coordinateValidatorMock.Setup(x => x.Validate(coordinatesFromClient))
+                .Returns(new ValidationResult("Wrong coordinates"));
+
+            var result = _sut.TryParse(coordinatesFromClient, out var coordinate);
+
+            result.Should().NotBe(ValidationResult.Success);
+            result.ErrorMessage.Should().Be("Wrong coordinates");
         }
     }
 }

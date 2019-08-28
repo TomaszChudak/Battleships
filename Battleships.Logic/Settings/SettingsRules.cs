@@ -1,16 +1,16 @@
 ﻿namespace Battleships.Logic.Settings
 {
-    class SettingsRules
+    internal class SettingsRules
     {
         // setting file
         internal const string SettingFileName = "appsettings.json";
 
         // Grid / RowCount section
-        internal const int MinimalGridRowCount = 10;
+        internal const int MinimalGridRowCount = 5;
         internal const int MaximalGridRowCount = 20;
 
         // Grid / ColumnCount section
-        internal const int MinimalGridColumnCount = 10;
+        internal const int MinimalGridColumnCount = 5;
         internal const int MaximalGridColumnCount = 20;
 
         // ShipTypes / Size section 
