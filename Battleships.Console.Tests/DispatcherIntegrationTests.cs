@@ -15,18 +15,18 @@ namespace Battleships.Console.Tests
         {
             _gameLogicMock = new Mock<IGameLogic>(MockBehavior.Strict);
             _inputReaderMock = new Mock<IInputReader>(MockBehavior.Strict);
-            _outputWritterMock = new Mock<IOutputWriter>(MockBehavior.Strict);
+            _outputWriterMock = new Mock<IOutputWriter>(MockBehavior.Strict);
             _soundPlayerMock = new Mock<ISoundPlayer>(MockBehavior.Strict);
             var cursorHelper = new CursorHelper();
-            var gridPainter = new GridPainter(_outputWritterMock.Object);
-            var gridResultPainter = new GridResultPainter(cursorHelper, _outputWritterMock.Object);
-            var textResultDisplayer = new TextResultDisplayer(_outputWritterMock.Object, cursorHelper);
-            var outputFacade = new OutputFacade(cursorHelper, gridPainter, gridResultPainter, textResultDisplayer, _soundPlayerMock.Object, _outputWritterMock.Object);
+            var gridPainter = new GridPainter(_outputWriterMock.Object);
+            var gridResultPainter = new GridResultPainter(cursorHelper, _outputWriterMock.Object);
+            var textResultDisplayer = new TextResultDisplayer(_outputWriterMock.Object, cursorHelper);
+            var outputFacade = new OutputFacade(cursorHelper, gridPainter, gridResultPainter, textResultDisplayer, _soundPlayerMock.Object, _outputWriterMock.Object);
             _sut = new Dispatcher(_gameLogicMock.Object, _inputReaderMock.Object, outputFacade);
         }
 
         private readonly Mock<IGameLogic> _gameLogicMock;
-        private readonly Mock<IOutputWriter> _outputWritterMock;
+        private readonly Mock<IOutputWriter> _outputWriterMock;
         private readonly Mock<ISoundPlayer> _soundPlayerMock;
         private readonly Mock<IInputReader> _inputReaderMock;
         private readonly IDispatcher _sut;
@@ -34,11 +34,11 @@ namespace Battleships.Console.Tests
         [Fact]
         public void PlayGame_Exception_InfoAboutExceptionIsShown()
         {
-            _outputWritterMock.Setup(x => x.SetCursorPosition(0, 0));
+            _outputWriterMock.Setup(x => x.SetCursorPosition(0, 0));
             var exception = "Something wrong with config.";
             _gameLogicMock.Setup(x => x.StartNewGame())
                 .Returns(new ResponseEnvelope<GridSize> {Success = false, ErrorDescription = exception});
-            _outputWritterMock.Setup(x => x.Write(exception));
+            _outputWriterMock.Setup(x => x.Write(exception));
             _inputReaderMock.Setup(x => x.ReadUserKey())
                 .Returns(null);
 
@@ -48,18 +48,19 @@ namespace Battleships.Console.Tests
         [Fact]
         public void PlayGame_MakeNewMoveWithRightData_ResultWithData()
         {
-            _outputWritterMock.Setup(x => x.SetCursorPosition(0, 0));
-            _outputWritterMock.Setup(x => x.SetCursorPosition(0, 22));
-            _outputWritterMock.Setup(x => x.SetCursorPosition(0, 23));
-            _outputWritterMock.Setup(x => x.SetCursorPosition(2, 23));
-            _outputWritterMock.Setup(x => x.SetCursorPosition(5, 2));
-            _outputWritterMock.Setup(x => x.SetCursorPosition(9, 4));
+            _outputWriterMock.Setup(x => x.Clear());
+            _outputWriterMock.Setup(x => x.SetCursorPosition(0, 0));
+            _outputWriterMock.Setup(x => x.SetCursorPosition(0, 22));
+            _outputWriterMock.Setup(x => x.SetCursorPosition(0, 23));
+            _outputWriterMock.Setup(x => x.SetCursorPosition(2, 23));
+            _outputWriterMock.Setup(x => x.SetCursorPosition(5, 2));
+            _outputWriterMock.Setup(x => x.SetCursorPosition(9, 4));
             var gridSize = new GridSize(10, 10);
             _gameLogicMock.Setup(x => x.StartNewGame())
                 .Returns(new ResponseEnvelope<GridSize> {Success = true, Content = gridSize});
-            _outputWritterMock.Setup(x => x.Write(It.Is<string>(y => y.Length == 1 || y.Length == 2 || y.Length == 4 || y.Length >= 200)));
-            _outputWritterMock.Setup(x => x.Write(It.Is<string>(y => y.Contains("A1") || y.Contains("B2") || y.Contains("Game End"))));
-            _outputWritterMock.Setup(x => x.WriteNewLine());
+            _outputWriterMock.Setup(x => x.Write(It.Is<string>(y => y.Length == 1 || y.Length == 2 || y.Length == 4 || y.Length >= 200)));
+            _outputWriterMock.Setup(x => x.Write(It.Is<string>(y => y.Contains("A1") || y.Contains("B2") || y.Contains("Game End"))));
+            _outputWriterMock.Setup(x => x.WriteNewLine());
             _inputReaderMock.SetupSequence(x => x.ReadUserCommand())
                 .Returns("a1")
                 .Returns("b2");
@@ -79,16 +80,17 @@ namespace Battleships.Console.Tests
         [Fact]
         public void PlayGame_MakeNewMoveWithWrongData_ResultWithIssueDescription()
         {
-            _outputWritterMock.Setup(x => x.SetCursorPosition(0, 0));
-            _outputWritterMock.Setup(x => x.SetCursorPosition(0, 22));
-            _outputWritterMock.Setup(x => x.SetCursorPosition(0, 23));
-            _outputWritterMock.Setup(x => x.SetCursorPosition(2, 23));
+            _outputWriterMock.Setup(x => x.Clear());
+            _outputWriterMock.Setup(x => x.SetCursorPosition(0, 0));
+            _outputWriterMock.Setup(x => x.SetCursorPosition(0, 22));
+            _outputWriterMock.Setup(x => x.SetCursorPosition(0, 23));
+            _outputWriterMock.Setup(x => x.SetCursorPosition(2, 23));
             var gridSize = new GridSize(10, 10);
             _gameLogicMock.Setup(x => x.StartNewGame())
                 .Returns(new ResponseEnvelope<GridSize> {Success = true, Content = gridSize});
-            _outputWritterMock.Setup(x => x.Write(It.Is<string>(y => y.Length == 1 || y.Length == 2 || y.Length == 4 || y.Length >= 200)));
-            _outputWritterMock.Setup(x => x.Write(It.Is<string>(y => y.Contains("A1") || y.Contains("Game End"))));
-            _outputWritterMock.Setup(x => x.WriteNewLine());
+            _outputWriterMock.Setup(x => x.Write(It.Is<string>(y => y.Length == 1 || y.Length == 2 || y.Length == 4 || y.Length >= 200)));
+            _outputWriterMock.Setup(x => x.Write(It.Is<string>(y => y.Contains("A1") || y.Contains("Game End"))));
+            _outputWriterMock.Setup(x => x.WriteNewLine());
             _inputReaderMock.SetupSequence(x => x.ReadUserCommand())
                 .Returns("aaa")
                 .Returns("a1");

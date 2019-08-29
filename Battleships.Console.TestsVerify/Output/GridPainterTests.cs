@@ -22,6 +22,7 @@ namespace Battleships.Console.TestsVerify.Output
         [InlineData(5, 8)]   
         public void PaintNewGrid_RightSize_GridIsPainted(int columnCount, int rowCount)
         {
+            _outputWriterMock.Setup(x => x.Clear());
             _outputWriterMock.Setup(x => x.SetCursorPosition(0, 0));
             _outputWriterMock.Setup(x => x.Write(It.IsAny<string>()));
             _outputWriterMock.Setup(x => x.WriteNewLine());

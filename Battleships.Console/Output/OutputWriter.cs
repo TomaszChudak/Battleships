@@ -5,6 +5,7 @@
         void Write(string value);
         void WriteNewLine();
         void SetCursorPosition(int left, int top);
+        void Clear();
     }
 
     internal class OutputWriter : IOutputWriter
@@ -22,6 +23,11 @@
         public void SetCursorPosition(int left, int top)
         {
             System.Console.SetCursorPosition(left, top);
+        }
+
+        public void Clear()
+        {
+            System.Console.Clear();
         }
     }
 }

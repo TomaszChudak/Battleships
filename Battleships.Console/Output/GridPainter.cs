@@ -18,6 +18,7 @@ namespace Battleships.Console.Output
 
         public void PaintNewGrid(GridSize gridSize)
         {
+            _outputWriter.Clear();
             _outputWriter.SetCursorPosition(0, 0);
 
             PaintColumnHeaders(gridSize.ColumnCount);
